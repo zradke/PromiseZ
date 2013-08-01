@@ -1,0 +1,18 @@
+
+# General
+*~.nib
+*.swp
+*.moved-aside
+.DS_Store
+
+# Xcode
+xcuserdata
+profile
+
+# Cocoapods
+Pods
+
+# Command line data
+build
+test-reports
+
