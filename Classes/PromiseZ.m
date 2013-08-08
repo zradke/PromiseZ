@@ -7,6 +7,7 @@
 //
 
 #import "PromiseZ_Private.h"
+#import "PromiseZ.h"
 
 NSInteger const PZMaximumRecursiveResolutionDepth = 30;
 
