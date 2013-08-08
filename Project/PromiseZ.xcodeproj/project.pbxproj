@@ -31,11 +31,11 @@
 		16F90EB317B43BC00006A6DF /* PromiseZ_Specs.m in Sources */ = {isa = PBXBuildFile; fileRef = 16F90EAF17B43BC00006A6DF /* PromiseZ_Specs.m */; };
 		16F90EC117B43E8E0006A6DF /* PromiseZ.m in Sources */ = {isa = PBXBuildFile; fileRef = 16F90EA617B43B9F0006A6DF /* PromiseZ.m */; };
 		16F90EC217B43E9C0006A6DF /* PromiseZ.h in Headers */ = {isa = PBXBuildFile; fileRef = 16F90EA517B43B9F0006A6DF /* PromiseZ.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		16F90EC317B43E9C0006A6DF /* PromiseZ_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 16F90EA717B43B9F0006A6DF /* PromiseZ_Private.h */; settings = {ATTRIBUTES = (); }; };
 		16F90EC417B43F0E0006A6DF /* PromiseZ.m in Sources */ = {isa = PBXBuildFile; fileRef = 16F90EA617B43B9F0006A6DF /* PromiseZ.m */; };
 		16F90EC517B43F410006A6DF /* PromiseZ.h in Headers */ = {isa = PBXBuildFile; fileRef = 16F90EA517B43B9F0006A6DF /* PromiseZ.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		16F90EC617B43F460006A6DF /* PromiseZ_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 16F90EA717B43B9F0006A6DF /* PromiseZ_Private.h */; settings = {ATTRIBUTES = (); }; };
 		16F90EC717B4427F0006A6DF /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 16F90EB917B43CAF0006A6DF /* InfoPlist.strings */; };
+		16F90ED317B447CB0006A6DF /* PromiseZ_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 16F90ED217B447C70006A6DF /* PromiseZ_Private.h */; };
+		16F90ED417B447CC0006A6DF /* PromiseZ_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 16F90ED217B447C70006A6DF /* PromiseZ_Private.h */; };
 		9481740740084061AEFEB042 /* libPods-PromiseZSpecs.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AC054E95B31F49178BF3E93D /* libPods-PromiseZSpecs.a */; };
 /* End PBXBuildFile section */
 
@@ -74,7 +74,6 @@
 		16F90E9417B4390E0006A6DF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		16F90EA517B43B9F0006A6DF /* PromiseZ.h */ = {isa = PBXFileReference; lastKnownFileType = file; path = PromiseZ.h; sourceTree = "<group>"; };
 		16F90EA617B43B9F0006A6DF /* PromiseZ.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PromiseZ.m; sourceTree = "<group>"; };
-		16F90EA717B43B9F0006A6DF /* PromiseZ_Private.h */ = {isa = PBXFileReference; lastKnownFileType = file; path = PromiseZ_Private.h; sourceTree = "<group>"; };
 		16F90EAE17B43BC00006A6DF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		16F90EAF17B43BC00006A6DF /* PromiseZ_Specs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PromiseZ_Specs.m; sourceTree = "<group>"; };
 		16F90EB017B43BC00006A6DF /* PromiseZSpecs-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "PromiseZSpecs-Info.plist"; sourceTree = "<group>"; };
@@ -83,6 +82,7 @@
 		16F90EBA17B43CAF0006A6DF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		16F90EBB17B43CAF0006A6DF /* PromiseZ-OSX-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "PromiseZ-OSX-Info.plist"; sourceTree = "<group>"; };
 		16F90EBC17B43CAF0006A6DF /* PromiseZ-OSX-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PromiseZ-OSX-Prefix.pch"; sourceTree = "<group>"; };
+		16F90ED217B447C70006A6DF /* PromiseZ_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PromiseZ_Private.h; sourceTree = "<group>"; };
 		48B6DDB14660419AAB593D32 /* Pods-PromiseZSpecs.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PromiseZSpecs.xcconfig"; path = "Pods/Pods-PromiseZSpecs.xcconfig"; sourceTree = SOURCE_ROOT; };
 		AC054E95B31F49178BF3E93D /* libPods-PromiseZSpecs.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PromiseZSpecs.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -168,8 +168,8 @@
 			isa = PBXGroup;
 			children = (
 				16F90EA517B43B9F0006A6DF /* PromiseZ.h */,
-				16F90EA717B43B9F0006A6DF /* PromiseZ_Private.h */,
 				16F90EA617B43B9F0006A6DF /* PromiseZ.m */,
+				16F90ED117B447C70006A6DF /* Private */,
 			);
 			name = Classes;
 			path = ../Classes;
@@ -222,6 +222,14 @@
 			name = "Support Files";
 			sourceTree = "<group>";
 		};
+		16F90ED117B447C70006A6DF /* Private */ = {
+			isa = PBXGroup;
+			children = (
+				16F90ED217B447C70006A6DF /* PromiseZ_Private.h */,
+			);
+			path = Private;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -230,7 +238,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				16F90EC217B43E9C0006A6DF /* PromiseZ.h in Headers */,
-				16F90EC317B43E9C0006A6DF /* PromiseZ_Private.h in Headers */,
+				16F90ED317B447CB0006A6DF /* PromiseZ_Private.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -239,7 +247,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				16F90EC517B43F410006A6DF /* PromiseZ.h in Headers */,
-				16F90EC617B43F460006A6DF /* PromiseZ_Private.h in Headers */,
+				16F90ED417B447CC0006A6DF /* PromiseZ_Private.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

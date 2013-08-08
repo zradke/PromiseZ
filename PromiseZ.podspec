@@ -16,33 +16,15 @@ Pod::Spec.new do |s|
                      chainable, and error catching!
                    DESC
   s.homepage     = "https://git.dev.rakuten.com/scm/~zachary.radke/promisez.git"
-  s.license      = 'MIT (example)'
+  s.license      = 'MIT'
   s.author       = { "Zach Radke" => "zachary.radke@mail.rakuten.com" }
   s.source       = { :git => "https://git.dev.rakuten.com/scm/~zachary.radke/promisez.git", :tag => s.version.to_s }
 
-  # If this Pod runs only on iOS or OS X, then specify the platform and
-  # the deployment target.
-  #
-  # s.platform     = :ios, '5.0'
+  s.ios.deployment_target = '5.0'
+  s.osx.deployment_target = '10.7'
 
-  # ――― MULTI-PLATFORM VALUES ――――――――――――――――――――――――――――――――――――――――――――――――― #
-
-  # If this Pod runs on both platforms, then specify the deployment
-  # targets.
-  #
-  # s.ios.deployment_target = '5.0'
-  # s.osx.deployment_target = '10.7'
-
-  s.source_files = 'Classes', 'Classes/**/*.{h,m}'
-
-  # A list of file patterns which select the header files that should be
-  # made available to the application. If the pattern is a directory then the
-  # path will automatically have '*.h' appended.
-  #
-  # If you do not explicitly set the list of public header files,
-  # all headers of source_files will be made public.
-  #
-  # s.public_header_files = 'Classes/**/*.h'
+  s.source_files = 'Classes/*.{h,m}'
+  s.public_header_files = 'Classes/*.h'
 
   s.requires_arc = true
 end
