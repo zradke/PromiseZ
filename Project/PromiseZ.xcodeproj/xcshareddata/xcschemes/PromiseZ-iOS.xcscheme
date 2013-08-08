@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "16547CBA17A9EA4A0065E967"
-               BuildableName = "libPromiseZ-iOS.a"
+               BuildableName = "libPromiseZ.a"
                BlueprintName = "PromiseZ-iOS"
                ReferencedContainer = "container:PromiseZ.xcodeproj">
             </BuildableReference>
