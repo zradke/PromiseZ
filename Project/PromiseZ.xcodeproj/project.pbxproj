@@ -23,23 +23,38 @@
 
 /* Begin PBXBuildFile section */
 		16547CBF17A9EA4A0065E967 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16547CBE17A9EA4A0065E967 /* Foundation.framework */; };
+		16873D0817BB1086004BAE0D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16F90E8F17B4390E0006A6DF /* Cocoa.framework */; };
+		16873D1917BB1087004BAE0D /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16547CCD17A9EA4B0065E967 /* SenTestingKit.framework */; };
+		16873D1A17BB1087004BAE0D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16F90E8F17B4390E0006A6DF /* Cocoa.framework */; };
+		16873D1D17BB1087004BAE0D /* PromiseZ.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16873D0717BB1086004BAE0D /* PromiseZ.framework */; };
+		16873D2317BB1087004BAE0D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 16873D2117BB1087004BAE0D /* InfoPlist.strings */; };
+		16873D2E17BB11BC004BAE0D /* PromiseZ-iOS-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 16873D2D17BB11BC004BAE0D /* PromiseZ-iOS-Prefix.pch */; };
+		16873D2F17BB1262004BAE0D /* PromiseZ_Specs.m in Sources */ = {isa = PBXBuildFile; fileRef = 16F90EAF17B43BC00006A6DF /* PromiseZ_Specs.m */; };
+		16873D3017BB1535004BAE0D /* PromiseZ.h in Headers */ = {isa = PBXBuildFile; fileRef = 16F90EA517B43B9F0006A6DF /* PromiseZ.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		16873D3117BB1537004BAE0D /* PromiseZ.m in Sources */ = {isa = PBXBuildFile; fileRef = 16F90EA617B43B9F0006A6DF /* PromiseZ.m */; };
+		16873D3217BB1540004BAE0D /* PromiseZ_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 16F90ED217B447C70006A6DF /* PromiseZ_Private.h */; };
 		16B64A6117B2BDF7002F773F /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16547CCD17A9EA4B0065E967 /* SenTestingKit.framework */; };
 		16B64A6217B2BDF7002F773F /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16547CCF17A9EA4B0065E967 /* UIKit.framework */; };
 		16B64A6317B2BDF7002F773F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16547CBE17A9EA4A0065E967 /* Foundation.framework */; };
 		16B64A7417B2C5E0002F773F /* libPromiseZ.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16547CBB17A9EA4A0065E967 /* libPromiseZ.a */; };
-		16F90E9017B4390E0006A6DF /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16F90E8F17B4390E0006A6DF /* Cocoa.framework */; };
 		16F90EB317B43BC00006A6DF /* PromiseZ_Specs.m in Sources */ = {isa = PBXBuildFile; fileRef = 16F90EAF17B43BC00006A6DF /* PromiseZ_Specs.m */; };
 		16F90EC117B43E8E0006A6DF /* PromiseZ.m in Sources */ = {isa = PBXBuildFile; fileRef = 16F90EA617B43B9F0006A6DF /* PromiseZ.m */; };
 		16F90EC217B43E9C0006A6DF /* PromiseZ.h in Headers */ = {isa = PBXBuildFile; fileRef = 16F90EA517B43B9F0006A6DF /* PromiseZ.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		16F90EC417B43F0E0006A6DF /* PromiseZ.m in Sources */ = {isa = PBXBuildFile; fileRef = 16F90EA617B43B9F0006A6DF /* PromiseZ.m */; };
-		16F90EC517B43F410006A6DF /* PromiseZ.h in Headers */ = {isa = PBXBuildFile; fileRef = 16F90EA517B43B9F0006A6DF /* PromiseZ.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		16F90EC717B4427F0006A6DF /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 16F90EB917B43CAF0006A6DF /* InfoPlist.strings */; };
 		16F90ED317B447CB0006A6DF /* PromiseZ_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 16F90ED217B447C70006A6DF /* PromiseZ_Private.h */; };
-		16F90ED417B447CC0006A6DF /* PromiseZ_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 16F90ED217B447C70006A6DF /* PromiseZ_Private.h */; };
+		24CA9968C3BE4687A832D534 /* libPods-PromiseZ-OSX-Specs.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B6B22BD30B714EAFB7B70076 /* libPods-PromiseZ-OSX-Specs.a */; };
+		28AFB90FF2A94B3397BAC942 /* libPods-PromiseZ-iOS-Specs.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A9E8D23275E49CBA0F378DD /* libPods-PromiseZ-iOS-Specs.a */; };
 		9481740740084061AEFEB042 /* libPods-PromiseZSpecs.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AC054E95B31F49178BF3E93D /* libPods-PromiseZSpecs.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		16873D1B17BB1087004BAE0D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 16547CB317A9EA4A0065E967 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 16873D0617BB1086004BAE0D;
+			remoteInfo = "PromiseZ-OSX";
+		};
 		16F90ECD17B445220006A6DF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 16547CB317A9EA4A0065E967 /* Project object */;
@@ -62,29 +77,35 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		04C85DF696EF42EAB09AB62F /* Pods-PromiseZ-iOS-Specs.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PromiseZ-iOS-Specs.xcconfig"; path = "Pods/Pods-PromiseZ-iOS-Specs.xcconfig"; sourceTree = SOURCE_ROOT; };
 		16547CBB17A9EA4A0065E967 /* libPromiseZ.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPromiseZ.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		16547CBE17A9EA4A0065E967 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		16547CCD17A9EA4B0065E967 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		16547CCF17A9EA4B0065E967 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
-		16B64A6017B2BDF7002F773F /* PromiseZSpecs.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PromiseZSpecs.octest; sourceTree = BUILT_PRODUCTS_DIR; };
-		16F90E8E17B4390E0006A6DF /* PromiseZ.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PromiseZ.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		16873D0717BB1086004BAE0D /* PromiseZ.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PromiseZ.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		16873D1817BB1086004BAE0D /* PromiseZ-OSX-Specs.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "PromiseZ-OSX-Specs.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		16873D2017BB1087004BAE0D /* PromiseZ-OSX-Specs-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PromiseZ-OSX-Specs-Info.plist"; sourceTree = "<group>"; };
+		16873D2217BB1087004BAE0D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		16873D2D17BB11BC004BAE0D /* PromiseZ-iOS-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PromiseZ-iOS-Prefix.pch"; sourceTree = "<group>"; };
+		16B64A6017B2BDF7002F773F /* PromiseZ-iOS-Specs.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "PromiseZ-iOS-Specs.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		16F90E8F17B4390E0006A6DF /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
 		16F90E9217B4390E0006A6DF /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		16F90E9317B4390E0006A6DF /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		16F90E9417B4390E0006A6DF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		16F90EA517B43B9F0006A6DF /* PromiseZ.h */ = {isa = PBXFileReference; lastKnownFileType = file; path = PromiseZ.h; sourceTree = "<group>"; };
+		16F90EA517B43B9F0006A6DF /* PromiseZ.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PromiseZ.h; sourceTree = "<group>"; };
 		16F90EA617B43B9F0006A6DF /* PromiseZ.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PromiseZ.m; sourceTree = "<group>"; };
 		16F90EAE17B43BC00006A6DF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		16F90EAF17B43BC00006A6DF /* PromiseZ_Specs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PromiseZ_Specs.m; sourceTree = "<group>"; };
-		16F90EB017B43BC00006A6DF /* PromiseZSpecs-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "PromiseZSpecs-Info.plist"; sourceTree = "<group>"; };
-		16F90EB117B43BC00006A6DF /* PromiseZSpecs-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PromiseZSpecs-Prefix.pch"; sourceTree = "<group>"; };
-		16F90EB617B43CA60006A6DF /* PromiseZ-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PromiseZ-Prefix.pch"; sourceTree = "<group>"; };
+		16F90EB017B43BC00006A6DF /* PromiseZ-iOS-Specs-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "PromiseZ-iOS-Specs-Info.plist"; sourceTree = "<group>"; };
+		16F90EB117B43BC00006A6DF /* PromiseZ-iOS-Specs-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PromiseZ-iOS-Specs-Prefix.pch"; sourceTree = "<group>"; };
 		16F90EBA17B43CAF0006A6DF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		16F90EBB17B43CAF0006A6DF /* PromiseZ-OSX-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "PromiseZ-OSX-Info.plist"; sourceTree = "<group>"; };
 		16F90EBC17B43CAF0006A6DF /* PromiseZ-OSX-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PromiseZ-OSX-Prefix.pch"; sourceTree = "<group>"; };
 		16F90ED217B447C70006A6DF /* PromiseZ_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PromiseZ_Private.h; sourceTree = "<group>"; };
-		48B6DDB14660419AAB593D32 /* Pods-PromiseZSpecs.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PromiseZSpecs.xcconfig"; path = "Pods/Pods-PromiseZSpecs.xcconfig"; sourceTree = SOURCE_ROOT; };
+		1A9E8D23275E49CBA0F378DD /* libPods-PromiseZ-iOS-Specs.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PromiseZ-iOS-Specs.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3DE51FEC360E416499DBD9F8 /* Pods-PromiseZ-OSX-Specs.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PromiseZ-OSX-Specs.xcconfig"; path = "Pods/Pods-PromiseZ-OSX-Specs.xcconfig"; sourceTree = SOURCE_ROOT; };
 		AC054E95B31F49178BF3E93D /* libPods-PromiseZSpecs.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PromiseZSpecs.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B6B22BD30B714EAFB7B70076 /* libPods-PromiseZ-OSX-Specs.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PromiseZ-OSX-Specs.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,6 +114,25 @@
 			buildActionMask = 2147483647;
 			files = (
 				16547CBF17A9EA4A0065E967 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		16873D0317BB1086004BAE0D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				16873D0817BB1086004BAE0D /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		16873D1417BB1086004BAE0D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				16873D1917BB1087004BAE0D /* SenTestingKit.framework in Frameworks */,
+				16873D1A17BB1087004BAE0D /* Cocoa.framework in Frameworks */,
+				16873D1D17BB1087004BAE0D /* PromiseZ.framework in Frameworks */,
+				24CA9968C3BE4687A832D534 /* libPods-PromiseZ-OSX-Specs.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -105,14 +145,7 @@
 				16B64A6217B2BDF7002F773F /* UIKit.framework in Frameworks */,
 				16B64A6317B2BDF7002F773F /* Foundation.framework in Frameworks */,
 				9481740740084061AEFEB042 /* libPods-PromiseZSpecs.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		16F90E8A17B4390E0006A6DF /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				16F90E9017B4390E0006A6DF /* Cocoa.framework in Frameworks */,
+				28AFB90FF2A94B3397BAC942 /* libPods-PromiseZ-iOS-Specs.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -127,7 +160,8 @@
 				16F90EC017B43CCD0006A6DF /* Support Files */,
 				16547CBD17A9EA4A0065E967 /* Frameworks */,
 				16547CBC17A9EA4A0065E967 /* Products */,
-				48B6DDB14660419AAB593D32 /* Pods-PromiseZSpecs.xcconfig */,
+				3DE51FEC360E416499DBD9F8 /* Pods-PromiseZ-OSX-Specs.xcconfig */,
+				04C85DF696EF42EAB09AB62F /* Pods-PromiseZ-iOS-Specs.xcconfig */,
 			);
 			sourceTree = "<group>";
 		};
@@ -135,8 +169,9 @@
 			isa = PBXGroup;
 			children = (
 				16547CBB17A9EA4A0065E967 /* libPromiseZ.a */,
-				16B64A6017B2BDF7002F773F /* PromiseZSpecs.octest */,
-				16F90E8E17B4390E0006A6DF /* PromiseZ.framework */,
+				16B64A6017B2BDF7002F773F /* PromiseZ-iOS-Specs.octest */,
+				16873D0717BB1086004BAE0D /* PromiseZ.framework */,
+				16873D1817BB1086004BAE0D /* PromiseZ-OSX-Specs.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -150,8 +185,19 @@
 				AC054E95B31F49178BF3E93D /* libPods-PromiseZSpecs.a */,
 				16F90E8F17B4390E0006A6DF /* Cocoa.framework */,
 				16F90E9117B4390E0006A6DF /* Other Frameworks */,
+				B6B22BD30B714EAFB7B70076 /* libPods-PromiseZ-OSX-Specs.a */,
+				1A9E8D23275E49CBA0F378DD /* libPods-PromiseZ-iOS-Specs.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		16873D1E17BB1087004BAE0D /* PromiseZ-OSX-Specs */ = {
+			isa = PBXGroup;
+			children = (
+				16873D2017BB1087004BAE0D /* PromiseZ-OSX-Specs-Info.plist */,
+				16873D2117BB1087004BAE0D /* InfoPlist.strings */,
+			);
+			path = "PromiseZ-OSX-Specs";
 			sourceTree = "<group>";
 		};
 		16F90E9117B4390E0006A6DF /* Other Frameworks */ = {
@@ -179,7 +225,8 @@
 			isa = PBXGroup;
 			children = (
 				16F90EAF17B43BC00006A6DF /* PromiseZ_Specs.m */,
-				16F90ED017B446240006A6DF /* Support Files */,
+				16F90ED017B446240006A6DF /* PromiseZ-iOS-Specs */,
+				16873D1E17BB1087004BAE0D /* PromiseZ-OSX-Specs */,
 			);
 			name = Tests;
 			path = ../Tests;
@@ -188,7 +235,7 @@
 		16F90EB517B43CA60006A6DF /* PromiseZ-iOS */ = {
 			isa = PBXGroup;
 			children = (
-				16F90EB617B43CA60006A6DF /* PromiseZ-Prefix.pch */,
+				16873D2D17BB11BC004BAE0D /* PromiseZ-iOS-Prefix.pch */,
 			);
 			path = "PromiseZ-iOS";
 			sourceTree = "<group>";
@@ -212,14 +259,14 @@
 			name = "Support Files";
 			sourceTree = "<group>";
 		};
-		16F90ED017B446240006A6DF /* Support Files */ = {
+		16F90ED017B446240006A6DF /* PromiseZ-iOS-Specs */ = {
 			isa = PBXGroup;
 			children = (
 				16F90EAD17B43BC00006A6DF /* InfoPlist.strings */,
-				16F90EB017B43BC00006A6DF /* PromiseZSpecs-Info.plist */,
-				16F90EB117B43BC00006A6DF /* PromiseZSpecs-Prefix.pch */,
+				16F90EB017B43BC00006A6DF /* PromiseZ-iOS-Specs-Info.plist */,
+				16F90EB117B43BC00006A6DF /* PromiseZ-iOS-Specs-Prefix.pch */,
 			);
-			name = "Support Files";
+			path = "PromiseZ-iOS-Specs";
 			sourceTree = "<group>";
 		};
 		16F90ED117B447C70006A6DF /* Private */ = {
@@ -233,21 +280,22 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		16873D0417BB1086004BAE0D /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				16873D3017BB1535004BAE0D /* PromiseZ.h in Headers */,
+				16873D3217BB1540004BAE0D /* PromiseZ_Private.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		16B64A5817B2BAAC002F773F /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				16F90EC217B43E9C0006A6DF /* PromiseZ.h in Headers */,
 				16F90ED317B447CB0006A6DF /* PromiseZ_Private.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		16F90E8B17B4390E0006A6DF /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				16F90EC517B43F410006A6DF /* PromiseZ.h in Headers */,
-				16F90ED417B447CC0006A6DF /* PromiseZ_Private.h in Headers */,
+				16873D2E17BB11BC004BAE0D /* PromiseZ-iOS-Prefix.pch in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -273,9 +321,48 @@
 			productReference = 16547CBB17A9EA4A0065E967 /* libPromiseZ.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		16B64A5F17B2BDF7002F773F /* PromiseZSpecs */ = {
+		16873D0617BB1086004BAE0D /* PromiseZ-OSX */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 16B64A6E17B2BDF7002F773F /* Build configuration list for PBXNativeTarget "PromiseZSpecs" */;
+			buildConfigurationList = 16873D2717BB1087004BAE0D /* Build configuration list for PBXNativeTarget "PromiseZ-OSX" */;
+			buildPhases = (
+				16873D0217BB1086004BAE0D /* Sources */,
+				16873D0317BB1086004BAE0D /* Frameworks */,
+				16873D0417BB1086004BAE0D /* Headers */,
+				16873D0517BB1086004BAE0D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "PromiseZ-OSX";
+			productName = "PromiseZ-OSX";
+			productReference = 16873D0717BB1086004BAE0D /* PromiseZ.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		16873D1717BB1086004BAE0D /* PromiseZ-OSX-Specs */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 16873D2A17BB1087004BAE0D /* Build configuration list for PBXNativeTarget "PromiseZ-OSX-Specs" */;
+			buildPhases = (
+				F0D43B48B73646B39B0FF1F3 /* Check Pods Manifest.lock */,
+				16873D1317BB1086004BAE0D /* Sources */,
+				16873D1417BB1086004BAE0D /* Frameworks */,
+				16873D1517BB1086004BAE0D /* Resources */,
+				16873D1617BB1086004BAE0D /* ShellScript */,
+				14885AFCBEE642F5A872A00A /* Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				16873D1C17BB1087004BAE0D /* PBXTargetDependency */,
+			);
+			name = "PromiseZ-OSX-Specs";
+			productName = "PromiseZ-OSXTests";
+			productReference = 16873D1817BB1086004BAE0D /* PromiseZ-OSX-Specs.octest */;
+			productType = "com.apple.product-type.bundle";
+		};
+		16B64A5F17B2BDF7002F773F /* PromiseZ-iOS-Specs */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 16B64A6E17B2BDF7002F773F /* Build configuration list for PBXNativeTarget "PromiseZ-iOS-Specs" */;
 			buildPhases = (
 				C35D12860F974841BDC9C0A0 /* Check Pods Manifest.lock */,
 				16B64A5B17B2BDF7002F773F /* Sources */,
@@ -288,27 +375,10 @@
 			);
 			dependencies = (
 			);
-			name = PromiseZSpecs;
+			name = "PromiseZ-iOS-Specs";
 			productName = PromiseZSpecs;
-			productReference = 16B64A6017B2BDF7002F773F /* PromiseZSpecs.octest */;
+			productReference = 16B64A6017B2BDF7002F773F /* PromiseZ-iOS-Specs.octest */;
 			productType = "com.apple.product-type.bundle";
-		};
-		16F90E8D17B4390E0006A6DF /* PromiseZ-OSX */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 16F90EA117B4390E0006A6DF /* Build configuration list for PBXNativeTarget "PromiseZ-OSX" */;
-			buildPhases = (
-				16F90E8917B4390E0006A6DF /* Sources */,
-				16F90E8A17B4390E0006A6DF /* Frameworks */,
-				16F90E8B17B4390E0006A6DF /* Headers */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "PromiseZ-OSX";
-			productName = "PromiseZ-OSX";
-			productReference = 16F90E8E17B4390E0006A6DF /* PromiseZ.framework */;
-			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
 
@@ -333,13 +403,29 @@
 			targets = (
 				16547CBA17A9EA4A0065E967 /* PromiseZ-iOS */,
 				16F90EC917B4450E0006A6DF /* iOS-Framework */,
-				16F90E8D17B4390E0006A6DF /* PromiseZ-OSX */,
-				16B64A5F17B2BDF7002F773F /* PromiseZSpecs */,
+				16B64A5F17B2BDF7002F773F /* PromiseZ-iOS-Specs */,
+				16873D0617BB1086004BAE0D /* PromiseZ-OSX */,
+				16873D1717BB1086004BAE0D /* PromiseZ-OSX-Specs */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		16873D0517BB1086004BAE0D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		16873D1517BB1086004BAE0D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				16873D2317BB1087004BAE0D /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		16B64A5D17B2BDF7002F773F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -351,6 +437,34 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		14885AFCBEE642F5A872A00A /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Pods-PromiseZ-OSX-Specs-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		16873D1617BB1086004BAE0D /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
 		16B64A5E17B2BDF7002F773F /* Run Script */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -407,10 +521,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Pods-PromiseZSpecs-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Pods-PromiseZ-iOS-Specs-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		C35D12860F974841BDC9C0A0 /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		F0D43B48B73646B39B0FF1F3 /* Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -436,6 +565,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		16873D0217BB1086004BAE0D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				16873D3117BB1537004BAE0D /* PromiseZ.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		16873D1317BB1086004BAE0D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				16873D2F17BB1262004BAE0D /* PromiseZ_Specs.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		16B64A5B17B2BDF7002F773F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -444,17 +589,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		16F90E8917B4390E0006A6DF /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				16F90EC417B43F0E0006A6DF /* PromiseZ.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		16873D1C17BB1087004BAE0D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 16873D0617BB1086004BAE0D /* PromiseZ-OSX */;
+			targetProxy = 16873D1B17BB1087004BAE0D /* PBXContainerItemProxy */;
+		};
 		16F90ECE17B445220006A6DF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 16547CBA17A9EA4A0065E967 /* PromiseZ-iOS */;
@@ -463,6 +605,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		16873D2117BB1087004BAE0D /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				16873D2217BB1087004BAE0D /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
 		16F90EAD17B43BC00006A6DF /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -506,8 +656,9 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
-				ONLY_ACTIVE_ARCH = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -529,7 +680,9 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -569,55 +722,27 @@
 			};
 			name = Release;
 		};
-		16B64A6F17B2BDF7002F773F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 48B6DDB14660419AAB593D32 /* Pods-PromiseZSpecs.xcconfig */;
-			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
-				GCC_PRECOMPILE_PREFIX_HEADER = NO;
-				INFOPLIST_FILE = "../Tests/PromiseZSpecs-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				WRAPPER_EXTENSION = octest;
-			};
-			name = Debug;
-		};
-		16B64A7017B2BDF7002F773F /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 48B6DDB14660419AAB593D32 /* Pods-PromiseZSpecs.xcconfig */;
-			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
-				GCC_PRECOMPILE_PREFIX_HEADER = NO;
-				INFOPLIST_FILE = "../Tests/PromiseZSpecs-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				WRAPPER_EXTENSION = octest;
-			};
-			name = Release;
-		};
-		16F90E9F17B4390E0006A6DF /* Debug */ = {
+		16873D2817BB1087004BAE0D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				COMBINE_HIDPI_IMAGES = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Library/Frameworks\"",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				FRAMEWORK_VERSION = A;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PromiseZ-OSX/PromiseZ-OSX-Prefix.pch";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				INFOPLIST_FILE = "PromiseZ-OSX/PromiseZ-OSX-Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_NAME = PromiseZ;
 				SDKROOT = macosx;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Debug;
 		};
-		16F90EA017B4390E0006A6DF /* Release */ = {
+		16873D2917BB1087004BAE0D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
@@ -625,20 +750,80 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Library/Frameworks\"",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				FRAMEWORK_VERSION = A;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PromiseZ-OSX/PromiseZ-OSX-Prefix.pch";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				INFOPLIST_FILE = "PromiseZ-OSX/PromiseZ-OSX-Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_NAME = PromiseZ;
 				SDKROOT = macosx;
 				WRAPPER_EXTENSION = framework;
+			};
+			name = Release;
+		};
+		16873D2B17BB1087004BAE0D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3DE51FEC360E416499DBD9F8 /* Pods-PromiseZ-OSX-Specs.xcconfig */;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "PromiseZ-OSX/PromiseZ-OSX-Prefix.pch";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				INFOPLIST_FILE = "../Tests/PromiseZ-OSX-Specs/PromiseZ-OSX-Specs-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		16873D2C17BB1087004BAE0D /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3DE51FEC360E416499DBD9F8 /* Pods-PromiseZ-OSX-Specs.xcconfig */;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "PromiseZ-OSX/PromiseZ-OSX-Prefix.pch";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				INFOPLIST_FILE = "../Tests/PromiseZ-OSX-Specs/PromiseZ-OSX-Specs-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
+		16B64A6F17B2BDF7002F773F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 04C85DF696EF42EAB09AB62F /* Pods-PromiseZ-iOS-Specs.xcconfig */;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				INFOPLIST_FILE = "../Tests/PromiseZ-iOS-Specs-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		16B64A7017B2BDF7002F773F /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 04C85DF696EF42EAB09AB62F /* Pods-PromiseZ-iOS-Specs.xcconfig */;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				INFOPLIST_FILE = "../Tests/PromiseZ-iOS-Specs-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = octest;
 			};
 			name = Release;
 		};
@@ -677,20 +862,29 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		16B64A6E17B2BDF7002F773F /* Build configuration list for PBXNativeTarget "PromiseZSpecs" */ = {
+		16873D2717BB1087004BAE0D /* Build configuration list for PBXNativeTarget "PromiseZ-OSX" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				16B64A6F17B2BDF7002F773F /* Debug */,
-				16B64A7017B2BDF7002F773F /* Release */,
+				16873D2817BB1087004BAE0D /* Debug */,
+				16873D2917BB1087004BAE0D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		16F90EA117B4390E0006A6DF /* Build configuration list for PBXNativeTarget "PromiseZ-OSX" */ = {
+		16873D2A17BB1087004BAE0D /* Build configuration list for PBXNativeTarget "PromiseZ-OSX-Specs" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				16F90E9F17B4390E0006A6DF /* Debug */,
-				16F90EA017B4390E0006A6DF /* Release */,
+				16873D2B17BB1087004BAE0D /* Debug */,
+				16873D2C17BB1087004BAE0D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		16B64A6E17B2BDF7002F773F /* Build configuration list for PBXNativeTarget "PromiseZ-iOS-Specs" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				16B64A6F17B2BDF7002F773F /* Debug */,
+				16B64A7017B2BDF7002F773F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -702,6 +896,7 @@
 				16F90ECC17B4450E0006A6DF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

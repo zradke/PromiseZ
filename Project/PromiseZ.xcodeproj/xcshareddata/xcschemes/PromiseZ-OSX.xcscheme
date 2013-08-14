@@ -14,8 +14,8 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "16F90E8D17B4390E0006A6DF"
-               BuildableName = "PromiseZ.framework"
+               BlueprintIdentifier = "16873D0617BB1086004BAE0D"
+               BuildableName = "PromiseZ-OSX.framework"
                BlueprintName = "PromiseZ-OSX"
                ReferencedContainer = "container:PromiseZ.xcodeproj">
             </BuildableReference>
@@ -28,6 +28,16 @@
       shouldUseLaunchSchemeArgsEnv = "YES"
       buildConfiguration = "Debug">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "16873D1717BB1086004BAE0D"
+               BuildableName = "PromiseZ-OSX-Specs.octest"
+               BlueprintName = "PromiseZ-OSX-Specs"
+               ReferencedContainer = "container:PromiseZ.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
