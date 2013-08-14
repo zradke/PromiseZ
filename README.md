@@ -7,7 +7,7 @@ A high level implementation of the [Promises/A+ spec](https://github.com/promise
 There are a few different installation options, ordered here from least to most complex (as far as I can tell).
 
 * Drag-n-drop
-* Cocoapods
+* ~~Cocoapods~~ (Currently unavailable)
 * Build framework
 
 ##Drag-n-drop
@@ -40,7 +40,7 @@ Having trouble finding the framework? Here are the paths from the PromiseZ deriv
 At its core a promise represents an undetermined result. For example, when making a network request, the data is not available immediately, and the request can either be successful with a result or fail for some reason. Promises represent all those states and potential values in one object.
 
 ##What's the catch?
-The PromiseZ framework and object represent only the promise part of the equation. The other part is that in order for it to be any use, **your async methods must generate, return, keep, and break PromiseZ**. See the section on [being a PromiseZ provider](#promiseProvider) for more info on that!
+The PromiseZ framework and object represent only the promise part of the equation. The other part is that in order for it to be any use, **your async methods must generate, return, keep, and break PromiseZ**. See the section on being a PromiseZ provider for more info on that!
 
 ##How do I work with a PromiseZ?
 First, you'll need to get a hold of one from some method. Then, you can use the `thenOnKept:orOnBroken:` method on that PromiseZ to indicate actions that should take place when the promise is kept or broken. What's more, `thenOnKept:orOnBroken:` will also return *another* PromiseZ which you can put more `thenOnKept:orOnBroken:` conditions on! 
@@ -100,7 +100,7 @@ PromiseZ *finalPromise = [[[self doSomethingAsync] thenOnKept:^id(id result) {
 }];
 ```
 
-##[Being a PromiseZ provider](id:promiseProvider)
+##Being a PromiseZ provider
 PromiseZ are only useful if they are used by your asynchronous methods. Specific implementations are a bit beyond the scope of this read-me, but generally there are a few points to consider:
 
 * When an async method is called, return a PromiseZ object

@@ -15,10 +15,10 @@ Pod::Spec.new do |s|
                      Using and returning promises from methods allows them to be asyncronous,
                      chainable, and error catching!
                    DESC
-  s.homepage     = "https://git.dev.rakuten.com/scm/~zachary.radke/promisez.git"
+  s.homepage     = "https://github.com/zradke/PromiseZ"
   s.license      = 'MIT'
   s.author       = { "Zach Radke" => "zachary.radke@mail.rakuten.com" }
-  s.source       = { :git => "https://git.dev.rakuten.com/scm/~zachary.radke/promisez.git", :tag => s.version.to_s }
+  s.source       = { :git => "https://github.com/zradke/PromiseZ.git", :tag => s.version.to_s }
 
   s.ios.deployment_target = '5.0'
   s.osx.deployment_target = '10.7'
