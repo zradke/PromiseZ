@@ -10,6 +10,12 @@ There are a few different installation options, ordered here from least to most 
 * ~~Cocoapods~~ (Currently unavailable)
 * Build framework
 
+Regardless of the installation method, you can actually start working with the PromiseZ class by simply importing it wherever you need:
+
+```objc
+#import "PromiseZ.h"
+```
+
 ##Drag-n-drop
 PromiseZ is really just two files: **PromiseZ.h** and **PromiseZ.m**. You can clone this repo, and simply drag those two files into your Xcode project. Make sure the "Copy items into destination group's folder (if needed)" checkbox is checked, and your main project target is checked, and that none of the names clash.
 
@@ -18,7 +24,7 @@ Cocoapods is a nice dependency manager for iOS and OSX apps. Take a look at the 
 
 Once cocoapods is set up, just add…
 
-```
+```ruby
 pod 'PromiseZ'
 ```
 
@@ -47,7 +53,7 @@ First, you'll need to get a hold of one from some method. Then, you can use the 
 
 Let's see an example:
 
-```
+```objc
 PromiseZ *promise1 = [self doSomethingAsync];
 PromiseZ *promise2 = [promise1 thenOnKept:^id(id result) {
 	// Do something with result
@@ -62,7 +68,7 @@ For even more flexibility, you can choose to return something from an on-kept or
 
 Let's see an example:
 
-```
+```objc
 PromiseZ *originalPromise = [self doSomethingAsync];
 PromiseZ *returnedPromise = [originalPromise thenOnKept:^id(id result) {
 	PromiseZ *otherPromise = [self doAnotherAsyncOperationWithValue:result];
@@ -75,7 +81,7 @@ As a last note, **handler blocks are not invoked on the main queue**. This means
 
 For example:
 
-```
+```objc
 PromiseZ *returnPromise = [[self doSomethingAsync] thenOnSuccess:^id(id result) {
 	[[NSOperationQueue mainQueue] addOperationWithBlock:^{
 		[tableView reloadData];
@@ -89,7 +95,7 @@ Because `thenOnKept:orOnBroken:` returns another PromiseZ, you can chain togethe
 
 Let's rewrite the previous example to take advantage of chaining:
 
-```
+```objc
 PromiseZ *finalPromise = [[[self doSomethingAsync] thenOnKept:^id(id result) {
 	return [self doAnotherAsyncOperationWithValue:result];
 } orOnBroken:nil] thenOnKept:^id(id result) {
