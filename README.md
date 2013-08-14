@@ -11,7 +11,7 @@ There are a few different installation options, ordered here from least to most 
 * Build framework
 
 ##Drag-n-drop
-PromiseZ is really just two files: PromiseZ.h and PromiseZ.m. You can clone this repo, and simply drag those two files into your Xcode project if the names don't clash.
+PromiseZ is really just two files: **PromiseZ.h** and **PromiseZ.m**. You can clone this repo, and simply drag those two files into your Xcode project. Make sure the "Copy items into destination group's folder (if needed)" checkbox is checked, and your main project target is checked, and that none of the names clash.
 
 ##Cocoapods
 Cocoapods is a nice dependency manager for iOS and OSX apps. Take a look at the [Cocoapods website](https://github.com/CocoaPods/CocoaPods) to get started if you're not familiar.
@@ -25,7 +25,12 @@ pod 'PromiseZ'
 to your Podfile and run `pod install` from the command line!
 
 ##Build framework
-If you really like frameworks for some reason, you can clone this repo and change the scheme to `iOS-Framework` or `PromiseZ-OSX` (depending on which platform you are running on) and run. In the `Products` folder you should see some things with black text. Right click and choose `Show in Finder` to easily get to the build directory. There you should see a PromiseZ.framework folder which you can drag and drop into your project.
+If you really like frameworks for some reason, you can clone this repo and change the scheme to `PromiseZ-iOS-Universal` or `PromiseZ-OSX` (depending on which platform you are running on). You may need to change the configuration if you want a `Release` version. After that, run the scheme. In the `Products` folder you should see some things with black text. Right click and choose `Show in Finder` to easily get to the build directory. If all the products are red, then navigate to the derived data folder (probably easiest through the Organizer). There you should see a **PromiseZ.framework** folder which you can drag and drop into your project.
+
+Having trouble finding the framework? Here are the paths from the PromiseZ derived data folder depending on the scheme used:
+
+* iOS: `Build/Products/<Configuration>-<iphone…>/PromiseZ.framework`
+* OSX: `Build/Products/<Configuration>/PromiseZ.framework`
 
 ---
 
@@ -126,4 +131,4 @@ The PZThenable protocol defines the `thenOnKept:orOnBroken:` method which confor
 * A bound promise will not respond to `keepWithResult:` or `breakWithReason:` unless the result/reason is the exact object which the binding promise was resolved with.
 
 ##Testing
-This library/class/framework was unit tested using [Kiwi](https://github.com/allending/Kiwi/). If you would like to run the tests yourself, simply clone this repo and in Xcode change the scheme to 'PromiseZ-iOS' and do `Product/Test` or `CMD+U`.
+This library/class/framework was unit tested using [Kiwi](https://github.com/allending/Kiwi/). If you would like to run the tests yourself, simply clone this repo and in Xcode change the scheme to `PromiseZ-iOS` or `PromiseZ-OSX` and from the top menu select `Product/Test` or use the shortcut `CMD+U`.

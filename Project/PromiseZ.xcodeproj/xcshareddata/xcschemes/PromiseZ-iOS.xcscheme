@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "16547CBA17A9EA4A0065E967"
+               BlueprintIdentifier = "161DD7AC17BBF2B10053EA55"
                BuildableName = "libPromiseZ.a"
                BlueprintName = "PromiseZ-iOS"
                ReferencedContainer = "container:PromiseZ.xcodeproj">
@@ -32,7 +32,7 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "16B64A5F17B2BDF7002F773F"
+               BlueprintIdentifier = "161DD7BA17BBF2B10053EA55"
                BuildableName = "PromiseZ-iOS-Specs.octest"
                BlueprintName = "PromiseZ-iOS-Specs"
                ReferencedContainer = "container:PromiseZ.xcodeproj">

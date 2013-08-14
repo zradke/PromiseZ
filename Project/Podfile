@@ -1,11 +1,9 @@
-platform :ios, '6.1'
-
 target 'PromiseZ-iOS-Specs', :exclusive => true do
+  platform :ios, '6.1'
   pod 'Kiwi'
 end
 
-platform :osx
-
 target 'PromiseZ-OSX-Specs', :exclusive => true do
+  platform :osx
   pod 'Kiwi'
 end

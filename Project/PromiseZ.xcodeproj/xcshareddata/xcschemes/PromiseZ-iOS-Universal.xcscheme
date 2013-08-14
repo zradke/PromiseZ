@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "16F90EC917B4450E0006A6DF"
-               BuildableName = "iOS-Framework"
-               BlueprintName = "iOS-Framework"
+               BlueprintIdentifier = "161DD7D717BBF6300053EA55"
+               BuildableName = "PromiseZ-iOS-Universal"
+               BlueprintName = "PromiseZ-iOS-Universal"
                ReferencedContainer = "container:PromiseZ.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -35,7 +35,7 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
-      buildConfiguration = "Release"
+      buildConfiguration = "Debug"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       allowLocationSimulation = "YES">
