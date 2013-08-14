@@ -6,7 +6,6 @@
 //  Copyright (c) 2013 Zachary Radke. All rights reserved.
 //
 
-#import "PromiseZ_Private.h"
 #import "PromiseZ.h"
 
 NSInteger const PZMaximumRecursiveResolutionDepth = 30;
@@ -28,6 +27,11 @@ static inline NSString *PZStringFromPromiseState(PZPromiseState state) {
             return @"Unknown";
     }
 }
+
+@interface PromiseZ ()
+@property (strong, nonatomic) NSOperationQueue *handlerQueue;
+@property (assign, nonatomic) NSInteger recursiveResolutionCount;
+@end
 
 @implementation PromiseZ
 
