@@ -10,8 +10,8 @@
 
 @interface PromiseZ ()
 
-@property (strong) NSOperationQueue *handlerQueue;
-@property (assign) NSInteger recursiveResolutionCount;
+@property (strong, nonatomic) NSOperationQueue *handlerQueue;
+@property (assign, nonatomic) NSInteger recursiveResolutionCount;
 
 - (void)bindToPromise:(PromiseZ *)promise;
 - (void)resolveWithHandlerResult:(id)result;

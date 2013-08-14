@@ -16,6 +16,19 @@ NSInteger const PZTypeError = 1900;
 NSInteger const PZExceptionError = 1910;
 NSInteger const PZRecursionError = 1920;
 
+static inline NSString *PZStringFromPromiseState(PZPromiseState state) {
+    switch (state) {
+        case PZPromiseStatePending:
+            return @"isPending";
+        case PZPromiseStateKept:
+            return @"isKept";
+        case PZPromiseStateBroken:
+            return @"isBroken";
+        default:
+            return @"Unknown";
+    }
+}
+
 @implementation PromiseZ
 
 - (instancetype)init {
@@ -26,6 +39,16 @@ NSInteger const PZRecursionError = 1920;
     }
     
     return self;
+}
+
+- (NSString *)description {
+    NSMutableString *description = [NSMutableString stringWithFormat:@"<%@: %p, state: %@, result: %@", NSStringFromClass([self class]), self, PZStringFromPromiseState([self state]), [self result]];
+    if ([self isBound]) {
+        [description appendFormat:@", binding promise: %p>", [self bindingPromise]];
+    } else {
+        [description appendString:@">"];
+    }
+    return [description copy];
 }
 
 - (BOOL)isPending {
@@ -45,13 +68,15 @@ NSInteger const PZRecursionError = 1920;
 }
 
 - (void)satisfyWithResult:(id)result state:(PZPromiseState)state {
-    if (![self isPending] || ([self isBound] && [[self bindingPromise] result] != result)) {
-        return;
+    @synchronized(self) {
+        if (![self isPending] || ([self isBound] && [[self bindingPromise] result] != result)) {
+            return;
+        }
+        _result = result;
+        _state = state;
+        [self setRecursiveResolutionCount:0];
+        [[self handlerQueue] setSuspended:NO];
     }
-    _result = result;
-    _state = state;
-    [self setRecursiveResolutionCount:0];
-    [[self handlerQueue] setSuspended:NO];
 }
 
 - (void)keepWithResult:(id)result {
@@ -88,14 +113,19 @@ NSInteger const PZRecursionError = 1920;
         [self bindToPromise:result];
     } else if ([result conformsToProtocol:@protocol(PZThenable)]) {
         __weak typeof(self) weakSelf = self;
+        __block BOOL handlerExecuted = NO;
         [result thenOnKept:^id(id value) {
+            if (handlerExecuted) { return nil; }
             typeof(self) strongSelf = weakSelf;
             strongSelf.recursiveResolutionCount += 1;
             [strongSelf resolveWithHandlerResult:value];
+            handlerExecuted = YES;
             return nil;
         } orOnBroken:^id(NSError *error) {
+            if (handlerExecuted) { return nil; }
             typeof(self) strongSelf = weakSelf;
             [strongSelf breakWithReason:error];
+            handlerExecuted = YES;
             return nil;
         }];
     } else {

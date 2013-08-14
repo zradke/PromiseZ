@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 typedef id(^PZOnKeptBlock)(id value);
-typedef id(^PZOnBrokenBlock)(NSError *reason);
+typedef id(^PZOnBrokenBlock)(NSError *error);
 
 /**
  * The PZThenable protocol declares a reliable interface for objects to work
@@ -137,7 +137,7 @@ extern NSInteger const PZRecursionError;
  * kept or broken can result in incorrect assumptions. Use the state property or
  * isPending, isKept, isBroken instead.
  */
-@property (strong, readonly) id result;
+@property (strong, nonatomic, readonly) id result;
 
 
 /// @name Checking the promise's state
@@ -150,7 +150,7 @@ extern NSInteger const PZRecursionError;
  * - PZPromiseStateKept
  * - PZPromiseStateBroken
  */
-@property (assign, readonly) PZPromiseState state;
+@property (assign, nonatomic, readonly) PZPromiseState state;
 
 /**
  * Asks the promise if it is pending

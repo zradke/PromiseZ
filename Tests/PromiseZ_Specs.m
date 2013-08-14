@@ -12,10 +12,393 @@
 SPEC_BEGIN(PromiseZ_Specs)
 
 __block PromiseZ *promise;
+__block NSString *result;
+__block NSError *reason;
 
 beforeEach(^{
     promise = [PromiseZ new];
+    result = @"Kept!";
+    reason = [NSError errorWithDomain:PZErrorDomain code:-100 userInfo:nil];
 });
+
+#pragma mark - Promises/A+ spec tests
+
+describe(@"promise states", ^{
+    context(@"when pending", ^{
+        specify(^{
+            [[theValue([promise isPending]) should] beTrue];
+            [[theValue([promise isKept]) should] beFalse];
+            [[theValue([promise isBroken]) should] beFalse];
+        });
+        
+        it(@"can be kept", ^{
+            [promise keepWithResult:result];
+            [[theValue([promise isKept]) should] beTrue];
+        });
+        
+        it(@"can be broken", ^{
+            [promise breakWithReason:reason];
+            [[theValue([promise isBroken]) should] beTrue];
+        });
+    });
+    
+    context(@"when kept", ^{
+        beforeEach(^{
+            [promise keepWithResult:result];
+        });
+        
+        specify(^{
+            [[theValue([promise isKept]) should] beTrue];
+            [[theValue([promise isBroken]) should] beFalse];
+            [[theValue([promise isPending]) should] beFalse];
+            [[[promise result] should] equal:result];
+        });
+        
+        it(@"cannot transition to broken", ^{
+            [promise breakWithReason:reason];
+            [[theValue([promise isBroken]) shouldNot] beTrue];
+        });
+        
+        
+        it(@"cannot change its result", ^{
+            NSString *newResult = @"New Result";
+            [promise keepWithResult:newResult];
+            [[[promise result] shouldNot] equal:newResult];
+        });
+    });
+    
+    context(@"when broken", ^{
+        beforeEach(^{
+            [promise breakWithReason:reason];
+        });
+        
+        specify(^{
+            [[theValue([promise isBroken]) should] beTrue];
+            [[theValue([promise isKept]) should] beFalse];
+            [[theValue([promise isPending]) should] beFalse];
+            [[[promise result] should] equal:reason];
+        });
+        
+        it(@"cannot transition to kept", ^{
+            [promise keepWithResult:result];
+            [[theValue([promise isKept]) shouldNot] beTrue];
+        });
+        
+        it(@"cannot change its result", ^{
+            NSError *newError = [NSError errorWithDomain:PZErrorDomain code:-110 userInfo:nil];
+            [promise breakWithReason:newError];
+            [[[promise result] shouldNot] equal:newError];
+        });
+    });
+});
+
+describe(@"the then method", ^{
+    specify(^{
+        [[theValue([promise respondsToSelector:@selector(thenOnKept:orOnBroken:)]) should] beTrue];
+    });
+    
+    context(@"handler blocks are optional", ^{
+        it(@"does not break without an onKept block", ^{
+            [[theBlock(^{
+                [promise thenOnKept:nil orOnBroken:^id(NSError *reason) {
+                    return nil;
+                }];
+                [promise keepWithResult:result];
+            }) shouldNotEventually] raise];
+        });
+        
+        it(@"does not break without an onBroken block", ^{
+            [[theBlock(^{
+                [promise thenOnKept:^id(id value) {
+                    return nil;
+                } orOnBroken:nil];
+                [promise breakWithReason:reason];
+            }) shouldNotEventually] raise];
+        });
+    });
+    
+    context(@"with an onKept block", ^{
+        it(@"executes the block with the fulfilled result", ^{
+            __block BOOL fulfilled = NO;
+            [promise thenOnKept:^id(id value) {
+                fulfilled = [value isEqual:result];
+                return nil;
+            } orOnBroken:nil];
+            [promise keepWithResult:result];
+            [[expectFutureValue(theValue(fulfilled)) shouldEventually] beTrue];
+        });
+        
+        it(@"does not execute the block before the promise is fulfilled", ^{
+            __block BOOL fulfilled = NO;
+            [promise thenOnKept:^id(id value) {
+                fulfilled = [promise isKept];
+                return nil;
+            } orOnBroken:nil];
+            [promise keepWithResult:result];
+            [[expectFutureValue(theValue(fulfilled)) shouldEventually] beTrue];
+        });
+        
+        it(@"does not execute the block more than once", ^{
+            __block NSInteger timesExecuted = 0;
+            [promise thenOnKept:^id(id value) {
+                timesExecuted += 1;
+                return nil;
+            } orOnBroken:nil];
+            [promise keepWithResult:result];
+            [[expectFutureValue(theValue(timesExecuted)) shouldNotEventually] beGreaterThan:theValue(1)];
+        });
+    });
+    
+    context(@"with an onBroken block", ^{
+        it(@"executes the block with the broken reason", ^{
+            __block BOOL fulfilled = NO;
+            [promise thenOnKept:nil orOnBroken:^id(NSError *returnedReason) {
+                fulfilled = [returnedReason isEqual:reason];
+                return nil;
+            }];
+            [promise breakWithReason:reason];
+            [[expectFutureValue(theValue(fulfilled)) shouldEventually] beTrue];
+        });
+        
+        it(@"does not execute the block before the promise is broken", ^{
+            __block BOOL fulfilled = NO;
+            [promise thenOnKept:nil orOnBroken:^id(NSError *returnedReason) {
+                fulfilled = [promise isBroken];
+                return nil;
+            }];
+            [promise breakWithReason:reason];
+            [[expectFutureValue(theValue(fulfilled)) shouldEventually] beTrue];
+        });
+        
+        it(@"does not execute the block more than once", ^{
+            __block NSInteger timesExecuted = 0;
+            [promise thenOnKept:nil orOnBroken:^id(NSError *reason) {
+                timesExecuted += 1;
+                return nil;
+            }];
+            [promise breakWithReason:reason];
+            [[expectFutureValue(theValue(timesExecuted)) shouldNotEventually] beGreaterThan:theValue(1)];
+        });
+    });
+    
+    it(@"returns before the onKept block executes", ^{
+        [promise keepWithResult:result];
+        __block BOOL blockInvoked = NO;
+        [promise thenOnKept:^id(id value) {
+            blockInvoked = YES;
+            return nil;
+        } orOnBroken:nil];
+        [[theValue(blockInvoked) should] beFalse];
+    });
+    
+    it(@"returns before the onBroken block executes", ^{
+        [promise breakWithReason:reason];
+        __block BOOL blockInvoked = NO;
+        [promise thenOnKept:nil orOnBroken:^id(NSError *error) {
+            blockInvoked = YES;
+            return nil;
+        }];
+        [[theValue(blockInvoked) should] beFalse];
+    });
+    
+    context(@"calling multiple times on the same instance", ^{
+        it(@"executes onKept blocks in the order they were added", ^{
+            __block BOOL firstInvoked = NO;
+            __block BOOL secondInvoked = NO;
+            
+            [promise thenOnKept:^id(id value) {
+                if (!secondInvoked) {
+                    firstInvoked = YES;
+                }
+                return nil;
+            } orOnBroken:nil];
+            
+            [promise thenOnKept:^id(id value) {
+                if (firstInvoked) {
+                    secondInvoked = YES;
+                }
+                return nil;
+            } orOnBroken:nil];
+            
+            [promise keepWithResult:result];
+            [[expectFutureValue(theValue(firstInvoked && secondInvoked)) shouldEventually] beTrue];
+        });
+        
+        it(@"executes onBroken blocks in the order they were added", ^{
+            __block BOOL firstInvoked = NO;
+            __block BOOL secondInvoked = NO;
+            
+            [promise thenOnKept:nil orOnBroken:^id(NSError *error) {
+                if (!secondInvoked) {
+                    firstInvoked = YES;
+                }
+                return nil;
+            }];
+            
+            [promise thenOnKept:nil orOnBroken:^id(NSError *error) {
+                if (firstInvoked) {
+                    secondInvoked = YES;
+                }
+                return nil;
+            }];
+            
+            [promise breakWithReason:reason];
+            [[expectFutureValue(theValue(firstInvoked && secondInvoked)) shouldEventually] beTrue];
+        });
+    });
+    
+    context(@"returned promise", ^{
+        specify(^{
+            id result = [promise thenOnKept:nil orOnBroken:nil];
+            [[result shouldNot] beNil];
+            [[theValue([result isKindOfClass:[promise class]]) should] beTrue];
+        });
+        
+        it(@"resolves onKept block return values", ^{
+            NSString *handlerResponse = @"Handler return!";
+            PromiseZ *newPromise = [promise thenOnKept:^id(id value) {
+                return handlerResponse;
+            } orOnBroken:nil];
+            [[[newPromise shouldEventually] receive] resolveWithHandlerResult:handlerResponse];
+            [promise keepWithResult:result];
+        });
+        
+        it(@"resolves onBroken block return values", ^{
+            NSString *handlerResponse = @"Handler return!";
+            PromiseZ *newPromise = [promise thenOnKept:nil orOnBroken:^id(NSError *error) {
+                return handlerResponse;
+            }];
+            [[[newPromise shouldEventually] receive] resolveWithHandlerResult:handlerResponse];
+            [promise breakWithReason:reason];
+        });
+        
+        it(@"is rejected when onKept throws an exception", ^{
+            PromiseZ *newPromise = [promise thenOnKept:^id(id value) {
+                return [[NSArray array] objectAtIndex:1];
+            } orOnBroken:nil];
+            [promise keepWithResult:result];
+            [[expectFutureValue(theValue([newPromise isBroken])) shouldEventually] beTrue];
+            [[expectFutureValue([newPromise result]) shouldNotEventually] equal:result];
+            
+        });
+        
+        it(@"is rejected when onBroken throws an exception", ^{
+            PromiseZ *newPromise = [promise thenOnKept:nil orOnBroken:^id(NSError *error) {
+                return [[NSArray array] objectAtIndex:1];
+            }];
+            [promise breakWithReason:reason];
+            [[expectFutureValue(theValue([newPromise isBroken])) shouldEventually] beTrue];
+            [[expectFutureValue([newPromise result]) shouldNotEventually] equal:reason];
+        });
+        
+        it(@"is kept without an onKept block when the main promise is kept", ^{
+            PromiseZ *newPromise = [promise thenOnKept:nil orOnBroken:nil];
+            [promise keepWithResult:result];
+            [[expectFutureValue(theValue([newPromise isKept])) shouldEventually] beTrue];
+            [[expectFutureValue([newPromise result]) shouldEventually] equal:result];
+        });
+        
+        it(@"is broken without an onBroken block when the main promise is broken", ^{
+            PromiseZ *newPromise = [promise thenOnKept:nil orOnBroken:nil];
+            [promise breakWithReason:reason];
+            [[expectFutureValue(theValue([newPromise isBroken])) shouldEventually] beTrue];
+            [[expectFutureValue([newPromise result]) shouldEventually] equal:reason];
+        });
+    });
+});
+
+describe(@"promise resolution procedure", ^{
+    it(@"is broken when trying to resolve itself", ^{
+        [[[promise should] receive] breakWithReason:any()];
+        [promise resolveWithHandlerResult:promise];
+    });
+    
+    context(@"when the result is a PromiseZ", ^{
+        __block PromiseZ *newPromise;
+        beforeEach(^{
+            newPromise = [PromiseZ new];
+            [promise resolveWithHandlerResult:newPromise];
+        });
+        
+        it(@"stays pending when the result is pending", ^{
+            [[theValue([newPromise isPending]) should] beTrue];
+            [[theValue([promise isPending]) should] beTrue];
+        });
+        
+        it(@"is kept when the result is kept", ^{
+            [newPromise keepWithResult:result];
+            [[expectFutureValue(theValue([promise isKept])) shouldEventually] beTrue];
+            [[expectFutureValue([promise result]) shouldEventually] equal:result];
+        });
+        
+        it(@"is broken when the result is broken", ^{
+            [newPromise breakWithReason:reason];
+            [[expectFutureValue(theValue([promise isBroken])) shouldEventually] beTrue];
+            [[expectFutureValue([promise result]) shouldEventually] equal:reason];
+        });
+    });
+    
+    context(@"when the result is thenable", ^{
+        __block id thenable;
+        __block PZOnKeptBlock onKept;
+        __block PZOnBrokenBlock onBroken;
+        beforeEach(^{
+            thenable = [KWMock nullMockForProtocol:@protocol(PZThenable)];
+            KWCaptureSpy *onKeptSpy = [thenable captureArgument:@selector(thenOnKept:orOnBroken:) atIndex:0];
+            KWCaptureSpy *onBrokenSpy = [thenable captureArgument:@selector(thenOnKept:orOnBroken:) atIndex:1];
+            [promise resolveWithHandlerResult:thenable];
+            onKept = onKeptSpy.argument;
+            onBroken = onBrokenSpy.argument;
+        });
+        
+        it(@"recurses when the onKept block is executed", ^{
+            [[[promise should] receive] resolveWithHandlerResult:result];
+            onKept(result);
+        });
+        
+        it(@"is broken when the onBroken block is executed", ^{
+            [[[promise should] receive] breakWithReason:reason];
+            onBroken(reason);
+        });
+        
+        it(@"responds to the first handler execution", ^{
+            [[[promise should] receive] resolveWithHandlerResult:result];
+            [[[promise shouldNot] receive] breakWithReason:reason];
+            onKept(result);
+            onBroken(reason);
+        });
+        
+        it(@"ignores multiple executions of onKept", ^{
+            NSString *newResult = @"New result";
+            [[[promise should] receive] resolveWithHandlerResult:result];
+            [[[promise shouldNot] receive] resolveWithHandlerResult:newResult];
+            onKept(result);
+            onKept(newResult);
+        });
+        
+        it(@"ignores multiple executions of onBroken", ^{
+            NSError *newError = [NSError errorWithDomain:PZErrorDomain code:-110 userInfo:nil];
+            [[[promise should] receive] breakWithReason:reason];
+            [[[promise shouldNot] receive] breakWithReason:newError];
+            onBroken(reason);
+            onBroken(newError);
+        });
+        
+        it(@"is rejected when recursion seems infinite", ^{
+            [[[promise should] receive] breakWithReason:any()];
+            [promise setRecursiveResolutionCount:PZMaximumRecursiveResolutionDepth];
+            onKept(nil);
+        });
+    });
+    
+    it(@"is kept with other results", ^{
+        [[[promise should] receive] keepWithResult:result];
+        [promise resolveWithHandlerResult:result];
+    });
+});
+
+
+#pragma mark - Implementation detail tests
 
 describe(@"creating a promise", ^{
     it(@"not be nil", ^{
@@ -181,191 +564,5 @@ describe(@"binding a promise to another promise", ^{
         });
     });
 });
-
-describe(@"resolving a handler block and a dependent promise", ^{
-    __block PromiseZ *dependentPromise;
-    __block id (^genericHandler)(id);
-    __block NSString *handlerResult;
-    beforeEach(^{
-        dependentPromise = [PromiseZ new];
-        handlerResult = @"Handler Result!";
-        genericHandler = ^id(id value) {
-            return handlerResult;
-        };
-    });
-    
-    context(@"when the parent promise is kept", ^{
-        beforeEach(^{
-            [promise keepWithResult:@"Parent Result"];
-        });
-        
-        it(@"resolves the dependent promise with the handler's result", ^{
-            [[[dependentPromise should] receive] resolveWithHandlerResult:handlerResult];
-            [promise resolveHandlerBlock:genericHandler withDependentPromise:dependentPromise];
-        });
-        
-        context(@"without a handler", ^{
-            it(@"keeps the dependent promise with the parent's result", ^{
-                [promise resolveHandlerBlock:nil withDependentPromise:dependentPromise];
-                [[theValue([dependentPromise isKept]) should] beTrue];
-                [[[dependentPromise result] should] equal:[promise result]];
-            });
-        });
-        
-        context(@"without a dependent promise", ^{
-            __block BOOL handlerRun;
-            beforeEach(^{
-                handlerRun = NO;
-                genericHandler = ^id(id value) {
-                    handlerRun = YES;
-                    return handlerResult;
-                };
-            });
-            
-            it(@"still executes the handler block", ^{
-                [promise resolveHandlerBlock:genericHandler withDependentPromise:nil];
-                [[theValue(handlerRun) should] beTrue];
-            });
-        });
-        
-        context(@"when an exception is thrown", ^{
-            __block id (^brokenHandler)(id);
-            beforeEach(^{
-                brokenHandler = ^id(id value) {
-                    NSArray *brokenArray = [NSArray array];
-                    return [brokenArray objectAtIndex:1];
-                };
-            });
-            
-            it(@"breaks the dependent promise with an error", ^{
-                [promise resolveHandlerBlock:brokenHandler withDependentPromise:dependentPromise];
-                [[theValue([dependentPromise isBroken]) should] beTrue];
-                [[dependentPromise result] shouldNotBeNil];
-            });
-        });
-    });
-    
-    context(@"when the parent promise is broken", ^{
-        beforeEach(^{
-            [promise breakWithReason:[NSError errorWithDomain:PZErrorDomain code:1000 userInfo:nil]];
-        });
-        
-        it(@"resolves the dependent promise with the handler's result", ^{
-            [[[dependentPromise should] receive] resolveWithHandlerResult:handlerResult];
-            [promise resolveHandlerBlock:genericHandler withDependentPromise:dependentPromise];
-        });
-        
-        context(@"when there is no handler", ^{
-            it(@"breaks the dependent promise with the parent's reason", ^{
-                [promise resolveHandlerBlock:nil withDependentPromise:dependentPromise];
-                [[theValue([dependentPromise isBroken]) should] beTrue];
-                [[[dependentPromise result] should] equal:[promise result]];
-            });
-        });
-        
-        context(@"when the handler throws an error", ^{
-            __block id(^brokenHandler)(id);
-            beforeEach(^{
-                brokenHandler = ^id(id value) {
-                    return [[NSArray array] objectAtIndex:1];
-                };
-            });
-            
-            it(@"breaks the dependent promise with an error", ^{
-                [promise resolveHandlerBlock:brokenHandler withDependentPromise:dependentPromise];
-                [[theValue([dependentPromise isBroken]) should] beTrue];
-                [[dependentPromise result] shouldNotBeNil];
-            });
-        });
-    });
-});
-
-describe(@"resolving a promise with a handler's result", ^{
-    context(@"if the recursive resolution count is too high", ^{
-        beforeEach(^{
-            [promise setRecursiveResolutionCount:PZMaximumRecursiveResolutionDepth+1];
-            [promise resolveWithHandlerResult:nil];
-        });
-        
-        it(@"breaks the promise with an error", ^{
-            [[theValue([promise isBroken]) should] beTrue];
-        });
-    });
-    
-    context(@"if a promise is passed as the value", ^{
-        __block PromiseZ *resultPromise;
-        
-        beforeEach(^{
-            resultPromise = [PromiseZ new];
-        });
-        
-        it(@"binds the promise to the result", ^{
-            [[[promise should] receive] bindToPromise:resultPromise];
-            [promise resolveWithHandlerResult:resultPromise];
-        });
-        
-        context(@"if the promise itself is passed as the value", ^{
-            beforeEach(^{
-                [promise resolveWithHandlerResult:promise];
-            });
-            
-            it(@"breaks the promise with an error", ^{
-                [[theValue([promise isBroken]) should] beTrue];
-            });
-        });
-    });
-    
-    context(@"if the result is PZThenable", ^{
-        __block id mockThenable;
-        __block PZOnKeptBlock thenableOnKept;
-        __block PZOnBrokenBlock thenableOnBroken;
-        
-        beforeEach(^{
-            mockThenable = [KWMock mockForProtocol:@protocol(PZThenable)];
-        });
-        
-        it(@"uses the then method", ^{
-            [[[mockThenable should] receive] thenOnKept:any() orOnBroken:any()];
-            [promise resolveWithHandlerResult:mockThenable];
-        });
-        
-        context(@"on thenable kept", ^{
-            beforeEach(^{
-                KWCaptureSpy *spy = [mockThenable captureArgument:@selector(thenOnKept:orOnBroken:) atIndex:0];
-                [promise resolveWithHandlerResult:mockThenable];
-                thenableOnKept = spy.argument;
-            });
-            
-            it(@"increments the recursive resolution count", ^{
-                [promise setRecursiveResolutionCount:0];
-                [[promise stub] keepWithResult:any()];
-                thenableOnKept(nil);
-                [[theValue(promise.recursiveResolutionCount) should] equal:theValue(1)];                
-            });
-            
-            it(@"recursively invokes the resolution method with the new value", ^{
-                NSString *thenableResult = @"New Value";
-                [[[promise should] receive] resolveWithHandlerResult:thenableResult];
-                thenableOnKept(thenableResult);
-            });
-        });
-        
-        context(@"on thenable broken", ^{
-            beforeEach(^{
-                KWCaptureSpy *spy = [mockThenable captureArgument:@selector(thenOnKept:orOnBroken:) atIndex:1];
-                [promise resolveWithHandlerResult:mockThenable];
-                thenableOnBroken = spy.argument;
-            });
-            
-            it(@"breaks the promise with the passed value", ^{
-                NSError *error = [NSError errorWithDomain:PZErrorDomain code:1000 userInfo:nil];
-                thenableOnBroken(error);
-                [[theValue([promise isBroken]) should] beTrue];
-                [[[promise result] should] equal:error];
-            });
-        });
-    });
-});
-
 
 SPEC_END
