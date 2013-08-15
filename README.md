@@ -7,8 +7,8 @@ A high level implementation of the [Promises/A+ spec](https://github.com/promise
 There are a few different installation options, ordered here from least to most complex (as far as I can tell).
 
 * Drag-n-drop
-* ~~Cocoapods~~ (Currently unavailable)
-* Build framework
+* Cocoapods
+* Build a framework
 
 Regardless of the installation method, you can actually start working with the PromiseZ class by simply importing it wherever you need:
 
@@ -35,7 +35,7 @@ If you really like frameworks for some reason, you can clone this repo and chang
 
 Having trouble finding the framework? Here are the paths from the PromiseZ derived data folder depending on the scheme used:
 
-* iOS: `Build/Products/<Configuration>-<iphone…>/PromiseZ.framework`
+* iOS: `Build/Products/<Configuration>-iphone*/PromiseZ.framework`
 * OSX: `Build/Products/<Configuration>/PromiseZ.framework`
 
 ---
@@ -49,7 +49,7 @@ At its core a promise represents an undetermined result. For example, when makin
 The PromiseZ framework and object represent only the promise part of the equation. The other part is that in order for it to be any use, **your async methods must generate, return, keep, and break PromiseZ**. See the section on being a PromiseZ provider for more info on that!
 
 ##How do I work with a PromiseZ?
-First, you'll need to get a hold of one from some method. Then, you can use the `thenOnKept:orOnBroken:` method on that PromiseZ to indicate actions that should take place when the promise is kept or broken. What's more, `thenOnKept:orOnBroken:` will also return *another* PromiseZ which you can put more `thenOnKept:orOnBroken:` conditions on! 
+First, you'll need to get a hold of one from some method. Then, you can use the `thenOnKept:orOnBroken:` method on that PromiseZ to indicate actions that should take place when the promise is kept or broken. There's no limit to the number of times you can call `thenOnKept:orOnBroken:` on a single promise, and when the promise is kept or broken, all the appropriate handlers will be called. What's more, `thenOnKept:orOnBroken:` will also return *another* PromiseZ which you can put more `thenOnKept:orOnBroken:` conditions on! 
 
 Let's see an example:
 
@@ -118,7 +118,7 @@ A key point in this implementation is that the class with the async method needs
 ---
 
 #Getting into the snickel-frits
-Is a high-level overview not enough? This section gets into some more esoteric points about the PromiseZ implementation
+Is a high-level overview not enough? This section gets into some more esoteric points about the PromiseZ implementation.
 
 ##Becoming "thenable"
 The PZThenable protocol defines the `thenOnKept:orOnBroken:` method which conformers must implement. PromiseZ naturally adopts this protocol, but it is left exposed separately for cases when a method wishes to return a custom object instead of the normal PromiseZ. Typically, though, the PromiseZ class should suffice.
