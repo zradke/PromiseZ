@@ -1,6 +1,6 @@
 #PromiseZ
 
-[![Build Status](https://travis-ci.org/zradke/PromiseZ.png)](https://travis-ci.org/[YOUR_GITHUB_USERNAME]/[YOUR_PROJECT_NAME])
+[![Build Status](https://travis-ci.org/zradke/PromiseZ.png)](https://travis-ci.org/zradke/PromiseZ)
 
 A high level implementation of the [Promises/A+ spec](https://github.com/promises-aplus/promises-spec) which borrows heavily and shamelessly from the [RXPromise implementation](https://github.com/couchdeveloper/RXPromise).
 
@@ -149,3 +149,5 @@ Then open up the `PromiseZ.xcworkspace` and in Xcode change the scheme to `Promi
 You'll need one additional step, which can become two steps if you don't have [Homebrew](http://brew.sh/) installed. If not, first install Homebrew. Once that's done, run `brew install xctool`. [XCTool](https://github.com/facebook/xctool) is a neat little command line utility made by Facebook that really simplifies command line testing.
 
 In the main directory of the repo, just run `rake test` to run both iOS and OSX tests, or run `rake test:<ios/osx>` to just test one platform!
+
+This setup is taken almost directly from [AFNetworking's implementation](https://github.com/AFNetworking/AFNetworking/blob/master/Rakefile), and the associated [NSHipster article about unit-testing](http://nshipster.com/unit-testing/), so I'd highly recommend checking them out for more details.
