@@ -1,4 +1,7 @@
 #PromiseZ
+
+[![Build Status](https://travis-ci.org/zradke/PromiseZ.png)](https://travis-ci.org/[YOUR_GITHUB_USERNAME]/[YOUR_PROJECT_NAME])
+
 A high level implementation of the [Promises/A+ spec](https://github.com/promises-aplus/promises-spec) which borrows heavily and shamelessly from the [RXPromise implementation](https://github.com/couchdeveloper/RXPromise).
 
 ---
@@ -137,4 +140,12 @@ The PZThenable protocol defines the `thenOnKept:orOnBroken:` method which confor
 * A bound promise will not respond to `keepWithResult:` or `breakWithReason:` unless the result/reason is the exact object which the binding promise was resolved with.
 
 ##Testing
-This library/class/framework was unit tested using [Kiwi](https://github.com/allending/Kiwi/). If you would like to run the tests yourself, simply clone this repo and in Xcode change the scheme to `PromiseZ-iOS` or `PromiseZ-OSX` and from the top menu select `Product/Test` or use the shortcut `CMD+U`.
+This library/class/framework was unit tested using [Kiwi](https://github.com/allending/Kiwi/). If you would like to run the tests yourself, simply clone this repo, `cd` into the `Project` directory and run `pod install` to get Kiwi set up.
+
+###Inside Xcode
+Then open up the `PromiseZ.xcworkspace` and in Xcode change the scheme to `PromiseZ-iOS` or `PromiseZ-OSX` and from the top menu select `Product/Test` or use the shortcut `CMD+U`.
+
+###From the command line
+You'll need one additional step, which can become two steps if you don't have [Homebrew](http://brew.sh/) installed. If not, first install Homebrew. Once that's done, run `brew install xctool`. [XCTool](https://github.com/facebook/xctool) is a neat little command line utility made by Facebook that really simplifies command line testing.
+
+In the main directory of the repo, just run `rake test` to run both iOS and OSX tests, or run `rake test:<ios/osx>` to just test one platform!

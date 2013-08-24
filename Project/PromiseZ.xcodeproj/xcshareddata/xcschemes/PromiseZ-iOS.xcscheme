@@ -20,6 +20,20 @@
                ReferencedContainer = "container:PromiseZ.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "AF0AE9E17BD146CBA68C1CC2"
+               BuildableName = "libPods-PromiseZ-iOS-Specs.a"
+               BlueprintName = "Pods-PromiseZ-iOS-Specs"
+               ReferencedContainer = "container:Pods/Pods.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
