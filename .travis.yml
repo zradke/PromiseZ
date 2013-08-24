@@ -2,5 +2,5 @@ language: objective-c
 before_install:
     - brew update
     - brew install xctool
-    - cd Tests && pod install && cd $TRAVIS_BILD_DIR
+    - cd Project && pod install && cd $TRAVIS_BILD_DIR
 script: rake test
