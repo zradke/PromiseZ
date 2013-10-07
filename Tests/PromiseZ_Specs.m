@@ -7,7 +7,24 @@
 //
 
 #import <Kiwi/Kiwi.h>
-#import "PromiseZ_Private.h"
+#import "PromiseZ.h"
+
+// Expose private methods and properties
+@interface PromiseZ ()
+@property (strong, nonatomic) NSOperationQueue *handlerQueue;
+@property (assign, nonatomic) NSInteger recursiveResolutionCount;
+@property (strong, nonatomic) NSRecursiveLock *lock;
+
+@property (strong, nonatomic, readwrite) id result;
+@property (assign, nonatomic, readwrite) PZPromiseState state;
+@property (weak, nonatomic, readwrite) PromiseZ *bindingPromise;
+
+- (void)bindToPromise:(PromiseZ *)promise;
+- (void)resolveWithHandlerResult:(id)result;
+- (void)resolveHandlerBlock:(id (^)(id))handlerBlock withDependentPromise:(PromiseZ *)dependentPromise;
+- (instancetype)enqueueOnKept:(PZOnKeptBlock)onKept onBroken:(PZOnBrokenBlock)onBroken returnPromise:(BOOL)shouldReturnPromise;
+@end
+
 
 SPEC_BEGIN(PromiseZ_Specs)
 

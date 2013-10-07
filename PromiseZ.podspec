@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "PromiseZ"
-  s.version      = "0.1.0"
+  s.version      = "0.1.1"
   s.summary      = "PromiseZ done right and done small."
   s.description  = <<-DESC
                      PromiseZ is a small framework implementing the Promises/A+ spec

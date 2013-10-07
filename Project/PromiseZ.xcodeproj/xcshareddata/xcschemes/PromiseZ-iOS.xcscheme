@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0460"
+   LastUpgradeVersion = "0500"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -28,7 +28,7 @@
             buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "AF0AE9E17BD146CBA68C1CC2"
+               BlueprintIdentifier = "7E5BB4CFB7714DE0BC5D43D2"
                BuildableName = "libPods-PromiseZ-iOS-Specs.a"
                BlueprintName = "Pods-PromiseZ-iOS-Specs"
                ReferencedContainer = "container:Pods/Pods.xcodeproj">

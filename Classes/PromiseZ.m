@@ -10,10 +10,11 @@
 
 NSInteger const PZMaximumRecursiveResolutionDepth = 30;
 
-NSString *const PZErrorDomain = @"com.zachradke.PromiseZ.ErrorDomain";
+NSString *const PZErrorDomain = @"com.zachradke.promiseZ.errorDomain";
 NSInteger const PZTypeError = 1900;
 NSInteger const PZExceptionError = 1910;
 NSInteger const PZRecursionError = 1920;
+NSInteger const PZInternalError = 1930;
 
 static inline NSString *PZStringFromPromiseState(PZPromiseState state) {
     switch (state) {
@@ -31,6 +32,11 @@ static inline NSString *PZStringFromPromiseState(PZPromiseState state) {
 @interface PromiseZ ()
 @property (strong, nonatomic) NSOperationQueue *handlerQueue;
 @property (assign, nonatomic) NSInteger recursiveResolutionCount;
+@property (strong, nonatomic) NSRecursiveLock *lock;
+
+@property (strong, nonatomic, readwrite) id result;
+@property (assign, nonatomic, readwrite) PZPromiseState state;
+@property (weak, nonatomic, readwrite) PromiseZ *bindingPromise;
 @end
 
 @implementation PromiseZ
@@ -38,11 +44,23 @@ static inline NSString *PZStringFromPromiseState(PZPromiseState state) {
 - (instancetype)init {
     if ((self = [super init])) {
         _handlerQueue = [NSOperationQueue new];
-        [_handlerQueue setMaxConcurrentOperationCount:1];
+        _handlerQueue.name = [NSString stringWithFormat:@"com.zachradke.promiseZ.%p.handlerQueue", self];
+        _handlerQueue.maxConcurrentOperationCount = 1;
         [_handlerQueue setSuspended:YES];
+        
+        _lock = [NSRecursiveLock new];
+        _lock.name = [NSString stringWithFormat:@"com.zachradke.promiseZ.%p.lock", self];
     }
     
     return self;
+}
+
+- (void)dealloc {
+    [_handlerQueue cancelAllOperations];
+}
+
+- (void)cancelAllCallbacks {
+    [self.handlerQueue cancelAllOperations];
 }
 
 - (NSString *)description {
@@ -54,6 +72,9 @@ static inline NSString *PZStringFromPromiseState(PZPromiseState state) {
     }
     return [description copy];
 }
+
+
+#pragma mark - State checks
 
 - (BOOL)isPending {
     return ([self state] == PZPromiseStatePending);
@@ -71,16 +92,22 @@ static inline NSString *PZStringFromPromiseState(PZPromiseState state) {
     return ([self bindingPromise] != nil);
 }
 
+
+#pragma mark - Keeping, breaking, and binding promises
+
 - (void)satisfyWithResult:(id)result state:(PZPromiseState)state {
-    @synchronized(self) {
-        if (![self isPending] || ([self isBound] && [[self bindingPromise] result] != result)) {
-            return;
-        }
-        _result = result;
-        _state = state;
-        [self setRecursiveResolutionCount:0];
-        [[self handlerQueue] setSuspended:NO];
+    if (![self isPending] || ([self isBound] && [[self bindingPromise] result] != result)) {
+        return;
     }
+    
+    [self.lock lock];
+    
+    self.result = result;
+    self.state = state;
+    self.recursiveResolutionCount = 0;
+    [[self handlerQueue] setSuspended:NO];
+    
+    [self.lock unlock];
 }
 
 - (void)keepWithResult:(id)result {
@@ -93,40 +120,57 @@ static inline NSString *PZStringFromPromiseState(PZPromiseState state) {
 
 - (void)bindToPromise:(PromiseZ *)promise {
     if ([self isBound]) { return; }
-    _bindingPromise = promise;
+    
+    [self.lock lock];
+    
+    self.bindingPromise = promise;
+    
     __weak typeof(self) weakSelf = self;
     [promise enqueueOnKept:^id(id value) {
-        typeof(self) strongSelf = weakSelf;
-        [strongSelf keepWithResult:value];
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+        [strongSelf satisfyWithResult:value state:PZPromiseStateKept];
         return nil;
+        
     } onBroken:^id(NSError *error) {
-        typeof(self) strongSelf = weakSelf;
-        [strongSelf breakWithReason:error];
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+        [strongSelf satisfyWithResult:error state:PZPromiseStateBroken];
         return nil;
     } returnPromise:NO];
+    
+    [self.lock unlock];
 }
+
+
+#pragma mark - Resolving promises
 
 - (void)resolveWithHandlerResult:(id)result {
     if (self.recursiveResolutionCount > PZMaximumRecursiveResolutionDepth) {
-        NSError *error = [NSError errorWithDomain:PZErrorDomain code:PZRecursionError userInfo:@{NSLocalizedDescriptionKey: @"Promise resolution has exceeded the maximum allowed recursion depth"}];
+        NSError *error = [NSError errorWithDomain:PZErrorDomain code:PZRecursionError userInfo:@{NSLocalizedDescriptionKey: @"The promise's resolution has exceeded the maximum allowed recursion depth"}];
         [self breakWithReason:error];
+        
     } else if ([result isEqual:self]) {
-        NSError *error = [NSError errorWithDomain:PZErrorDomain code:PZTypeError userInfo:@{NSLocalizedDescriptionKey: @"Cannot resolve a promise with itself"}];
+        NSError *error = [NSError errorWithDomain:PZErrorDomain code:PZTypeError userInfo:@{NSLocalizedDescriptionKey: @"The promise cannot be resolved with itself"}];
         [self breakWithReason:error];
+        
     } else if ([result isKindOfClass:[self class]]) {
         [self bindToPromise:result];
+        
     } else if ([result conformsToProtocol:@protocol(PZThenable)]) {
         __weak typeof(self) weakSelf = self;
         __block BOOL handlerExecuted = NO;
+        
         [result thenOnKept:^id(id value) {
             if (handlerExecuted) { return nil; }
+            
             typeof(self) strongSelf = weakSelf;
             strongSelf.recursiveResolutionCount += 1;
             [strongSelf resolveWithHandlerResult:value];
             handlerExecuted = YES;
             return nil;
+            
         } orOnBroken:^id(NSError *error) {
             if (handlerExecuted) { return nil; }
+            
             typeof(self) strongSelf = weakSelf;
             [strongSelf breakWithReason:error];
             handlerExecuted = YES;
@@ -142,6 +186,7 @@ static inline NSString *PZStringFromPromiseState(PZPromiseState state) {
         if (handlerBlock) {
             id handlerResult = handlerBlock([self result]);
             [dependentPromise resolveWithHandlerResult:handlerResult];
+            
         } else {
             [dependentPromise satisfyWithResult:[self result] state:[self state]];
         }
@@ -152,20 +197,34 @@ static inline NSString *PZStringFromPromiseState(PZPromiseState state) {
     }
 }
 
+
+#pragma mark - Adding callback handlers
+
 - (instancetype)enqueueOnKept:(PZOnKeptBlock)onKept onBroken:(PZOnBrokenBlock)onBroken returnPromise:(BOOL)shouldReturnPromise {
     typeof(self) returnPromise = shouldReturnPromise ? [[self class] new] : nil;
+    __weak typeof(returnPromise) weakReturnedPromise = returnPromise;
     
-    __weak typeof(self) weakReturnPromise = returnPromise;
-    __weak typeof(self) weakSelf = self;
-    [self.handlerQueue addOperationWithBlock:^{
-        typeof(self) strongReturnPromise = weakReturnPromise;
-        typeof(self) strongSelf = weakSelf;
-        if ([strongSelf isKept]) {
-            [strongSelf resolveHandlerBlock:onKept withDependentPromise:strongReturnPromise];
-        } else if ([strongSelf isBroken]) {
-            [strongSelf resolveHandlerBlock:onBroken withDependentPromise:strongReturnPromise];
+    NSBlockOperation *operation = [NSBlockOperation new];
+    __weak NSBlockOperation *weakOperation = operation;
+    [operation addExecutionBlock:^{
+        if ([weakOperation isCancelled]) { return; }
+        
+        __strong typeof(weakReturnedPromise) strongReturnedPromise = weakReturnedPromise;
+        
+        if ([self isKept]) {
+            [self resolveHandlerBlock:onKept withDependentPromise:strongReturnedPromise];
+            
+        } else if ([self isBroken]) {
+            [self resolveHandlerBlock:onBroken withDependentPromise:strongReturnedPromise];
+            
+        } else {
+            NSError *error = [NSError errorWithDomain:PZErrorDomain code:PZInternalError userInfo:@{NSLocalizedDescriptionKey: @"The promise started executing its enqueued callback handlers before being kept or broken."}];
+            [self breakWithReason:error];
+            [strongReturnedPromise breakWithReason:error];
         }
     }];
+    
+    [self.handlerQueue addOperation:operation];
     
     return returnPromise;
 }

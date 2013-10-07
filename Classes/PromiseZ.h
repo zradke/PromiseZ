@@ -58,6 +58,7 @@ extern NSString *const PZErrorDomain;
 extern NSInteger const PZTypeError;
 extern NSInteger const PZExceptionError;
 extern NSInteger const PZRecursionError;
+extern NSInteger const PZInternalError;
 
 
 /**
@@ -218,7 +219,7 @@ extern NSInteger const PZRecursionError;
  *
  * @see bindToPromise:, isBound
  */
-@property (weak, readonly) PromiseZ *bindingPromise;
+@property (weak, nonatomic, readonly) PromiseZ *bindingPromise;
 
 /**
  * Asks the promise if it is bound to another promise
@@ -239,5 +240,13 @@ extern NSInteger const PZRecursionError;
  * @param promise The promise to bind to
  */
 - (void)bindToPromise:(PromiseZ *)promise;
+
+
+/// @name Cancelling a promise
+
+/**
+ * Cancels enqueued on kept or on broken callbacks.
+ */
+- (void)cancelAllCallbacks;
 
 @end

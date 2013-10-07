@@ -8,6 +8,7 @@
 # Xcode
 xcuserdata
 profile
+*.xccheckout
 
 # Cocoapods
 Pods

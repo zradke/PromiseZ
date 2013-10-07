@@ -31,7 +31,6 @@
 		161DD7D117BBF3270053EA55 /* PromiseZ_Specs.m in Sources */ = {isa = PBXBuildFile; fileRef = 16F90EAF17B43BC00006A6DF /* PromiseZ_Specs.m */; };
 		161DD7D217BBF3B60053EA55 /* PromiseZ.m in Sources */ = {isa = PBXBuildFile; fileRef = 16F90EA617B43B9F0006A6DF /* PromiseZ.m */; };
 		161DD7D417BBF3CB0053EA55 /* PromiseZ.h in Headers */ = {isa = PBXBuildFile; fileRef = 16F90EA517B43B9F0006A6DF /* PromiseZ.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		161DD7D517BBF3CB0053EA55 /* PromiseZ_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 16F90ED217B447C70006A6DF /* PromiseZ_Private.h */; };
 		16873D0817BB1086004BAE0D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16F90E8F17B4390E0006A6DF /* Cocoa.framework */; };
 		16873D1917BB1087004BAE0D /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16547CCD17A9EA4B0065E967 /* SenTestingKit.framework */; };
 		16873D1A17BB1087004BAE0D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16F90E8F17B4390E0006A6DF /* Cocoa.framework */; };
@@ -40,7 +39,6 @@
 		16873D2F17BB1262004BAE0D /* PromiseZ_Specs.m in Sources */ = {isa = PBXBuildFile; fileRef = 16F90EAF17B43BC00006A6DF /* PromiseZ_Specs.m */; };
 		16873D3017BB1535004BAE0D /* PromiseZ.h in Headers */ = {isa = PBXBuildFile; fileRef = 16F90EA517B43B9F0006A6DF /* PromiseZ.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		16873D3117BB1537004BAE0D /* PromiseZ.m in Sources */ = {isa = PBXBuildFile; fileRef = 16F90EA617B43B9F0006A6DF /* PromiseZ.m */; };
-		16873D3217BB1540004BAE0D /* PromiseZ_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 16F90ED217B447C70006A6DF /* PromiseZ_Private.h */; };
 		1BB4DB1AA4BE4452B7E7F2E5 /* libPods-PromiseZ-iOS-Specs.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 769FB8DCDDA84F75B356EF0B /* libPods-PromiseZ-iOS-Specs.a */; };
 		24CA9968C3BE4687A832D534 /* libPods-PromiseZ-OSX-Specs.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B6B22BD30B714EAFB7B70076 /* libPods-PromiseZ-OSX-Specs.a */; };
 /* End PBXBuildFile section */
@@ -105,7 +103,6 @@
 		16F90EBA17B43CAF0006A6DF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		16F90EBB17B43CAF0006A6DF /* PromiseZ-OSX-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "PromiseZ-OSX-Info.plist"; sourceTree = "<group>"; };
 		16F90EBC17B43CAF0006A6DF /* PromiseZ-OSX-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PromiseZ-OSX-Prefix.pch"; sourceTree = "<group>"; };
-		16F90ED217B447C70006A6DF /* PromiseZ_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PromiseZ_Private.h; sourceTree = "<group>"; };
 		3DE51FEC360E416499DBD9F8 /* Pods-PromiseZ-OSX-Specs.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PromiseZ-OSX-Specs.xcconfig"; path = "Pods/Pods-PromiseZ-OSX-Specs.xcconfig"; sourceTree = SOURCE_ROOT; };
 		769FB8DCDDA84F75B356EF0B /* libPods-PromiseZ-iOS-Specs.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PromiseZ-iOS-Specs.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6B22BD30B714EAFB7B70076 /* libPods-PromiseZ-OSX-Specs.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PromiseZ-OSX-Specs.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -162,13 +159,12 @@
 			path = "PromiseZ-iOS";
 			sourceTree = "<group>";
 		};
-		161DD7C217BBF2B20053EA55 /* PromiseZ-iOSTests */ = {
+		161DD7C217BBF2B20053EA55 /* PromiseZ-iOS-Specs */ = {
 			isa = PBXGroup;
 			children = (
 				161DD7C417BBF2B20053EA55 /* PromiseZ-iOS-Specs-Info.plist */,
 				161DD7C517BBF2B20053EA55 /* InfoPlist.strings */,
 			);
-			name = "PromiseZ-iOSTests";
 			path = "PromiseZ-iOS-Specs";
 			sourceTree = "<group>";
 		};
@@ -234,7 +230,6 @@
 			children = (
 				16F90EA517B43B9F0006A6DF /* PromiseZ.h */,
 				16F90EA617B43B9F0006A6DF /* PromiseZ.m */,
-				16F90ED117B447C70006A6DF /* Private */,
 			);
 			name = Classes;
 			path = ../Classes;
@@ -244,7 +239,7 @@
 			isa = PBXGroup;
 			children = (
 				16F90EAF17B43BC00006A6DF /* PromiseZ_Specs.m */,
-				161DD7C217BBF2B20053EA55 /* PromiseZ-iOSTests */,
+				161DD7C217BBF2B20053EA55 /* PromiseZ-iOS-Specs */,
 				16873D1E17BB1087004BAE0D /* PromiseZ-OSX-Specs */,
 			);
 			name = Tests;
@@ -270,14 +265,6 @@
 			name = "Support Files";
 			sourceTree = "<group>";
 		};
-		16F90ED117B447C70006A6DF /* Private */ = {
-			isa = PBXGroup;
-			children = (
-				16F90ED217B447C70006A6DF /* PromiseZ_Private.h */,
-			);
-			path = Private;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -286,7 +273,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				161DD7D417BBF3CB0053EA55 /* PromiseZ.h in Headers */,
-				161DD7D517BBF3CB0053EA55 /* PromiseZ_Private.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -295,7 +281,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				16873D3017BB1535004BAE0D /* PromiseZ.h in Headers */,
-				16873D3217BB1540004BAE0D /* PromiseZ_Private.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -387,7 +372,7 @@
 		16547CB317A9EA4A0065E967 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0460;
+				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = "Zachary Radke";
 			};
 			buildConfigurationList = 16547CB617A9EA4A0065E967 /* Build configuration list for PBXProject "PromiseZ" */;
@@ -743,7 +728,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
-				ONLY_ACTIVE_ARCH = NO;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -776,7 +761,6 @@
 		16873D2817BB1087004BAE0D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				COMBINE_HIDPI_IMAGES = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -796,7 +780,6 @@
 		16873D2917BB1087004BAE0D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -818,7 +801,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3DE51FEC360E416499DBD9F8 /* Pods-PromiseZ-OSX-Specs.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -837,7 +819,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3DE51FEC360E416499DBD9F8 /* Pods-PromiseZ-OSX-Specs.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
@@ -880,6 +861,7 @@
 				161DD7DA17BBF6300053EA55 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		16547CB617A9EA4A0065E967 /* Build configuration list for PBXProject "PromiseZ" */ = {
 			isa = XCConfigurationList;
