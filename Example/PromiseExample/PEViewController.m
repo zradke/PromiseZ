@@ -13,6 +13,10 @@
 #import "PromiseZ.h"
 
 @interface PEViewController ()
+{
+    BOOL _isObservingProcessing;
+}
+
 @property (assign, nonatomic, getter = isProcessing) BOOL processing;
 @property (strong, nonatomic) NSOperationQueue *operationQueue;
 @end
@@ -23,6 +27,9 @@
     [super viewDidLoad];
     
     self.transitionImageView.hidden = YES;
+    
+    [self addObserver:self forKeyPath:@"processing" options:0 context:NULL];
+    _isObservingProcessing = YES;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -34,22 +41,56 @@
     return UIStatusBarStyleLightContent;
 }
 
+- (BOOL)shouldAutorotate {
+    return YES;
+}
+
+- (NSUInteger)supportedInterfaceOrientations {
+    return UIInterfaceOrientationMaskAll;
+}
+
+- (void)dealloc {
+    if (_isObservingProcessing) {
+        [self removeObserver:self forKeyPath:@"processing"];
+    }
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    if ([keyPath isEqualToString:@"processing"]) {
+        UIButton *downloadButton = self.downloadButton;
+        
+        if (self.isProcessing) {
+            [downloadButton setTitle:@"Cancel" forState:UIControlStateNormal];
+            
+        } else {
+            [downloadButton setTitle:@"Download" forState:UIControlStateNormal];
+            [self.operationQueue cancelAllOperations];
+        }
+        
+    } else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
+}
+
+
 #pragma mark - Actions
 
 - (IBAction)downloadAction:(UIButton *)sender {
     if (self.isProcessing) {
         self.processing = NO;
-        [sender setTitle:@"Download" forState:UIControlStateNormal];
-        [self.operationQueue cancelAllOperations];
         return;
     }
     
     self.processing = YES;
-    [sender setTitle:@"Cancel" forState:UIControlStateNormal];
     
     NSString *urlString = @"http://lorempixel.com/1024/1024";
     NSURL *url = [NSURL URLWithString:urlString];
     
+    // Here is the promise chain in action:
+    // 1. An image is downloaded from the lorempixel API
+    // 2. If it succeeds, the image is darkened
+    // 3. If that succeeds, the image is blurred
+    // If any of the tasks fail, the error trickles into the single error handler
     [[[[self downloadOperationWithImageURL:url] thenOnKept:^id(id value) {
         
         NSLog(@"Downloaded the image!");
@@ -73,24 +114,28 @@
         
         [self animateImageOnMainQueue:value];
         
+        // Promises resolve on a background queue, so you must be sure
+        // to make UI changes on the main queue, even ones indirectly
+        // caused by KVO
         [[NSOperationQueue mainQueue] addOperationWithBlock:^{
             self.processing = NO;
-            [sender setTitle:@"Download" forState:UIControlStateNormal];
         }];
         
         return nil;
         
     } orOnBroken:^id(NSError *error) {
+        
         NSLog(@"Error: %@", error);
         
+        // Promises resolve on a background queue, so you must be sure
+        // to make UI changes on the main queue, even ones indirectly
+        // caused by KVO
         [[NSOperationQueue mainQueue] addOperationWithBlock:^{
             self.processing = NO;
-            [sender setTitle:@"Download" forState:UIControlStateNormal];
         }];
         
         return nil;
     }];
-    
 }
 
 
@@ -106,6 +151,8 @@
 
 - (void)animateImageOnMainQueue:(UIImage *)image
 {
+    // Promises resolve on a background queue, so you must be sure
+    // to make UI changes on the main queue
     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
         UIImageView *transitionView = self.transitionImageView;
         

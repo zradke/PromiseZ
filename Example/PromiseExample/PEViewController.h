@@ -12,5 +12,6 @@
 
 @property (weak, nonatomic) IBOutlet UIImageView *mainImageView;
 @property (weak, nonatomic) IBOutlet UIImageView *transitionImageView;
+@property (weak, nonatomic) IBOutlet UIButton *downloadButton;
 
 @end

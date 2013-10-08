@@ -52,6 +52,9 @@ typedef NS_ENUM(NSInteger, PZPromiseState) {
     PZPromiseStateBroken
 };
 
+extern NSString *const PZPromiseWasKeptNotification;
+extern NSString *const PZPromiseWasBrokenNotification;
+
 extern NSInteger const PZMaximumRecursiveResolutionDepth;
 
 extern NSString *const PZErrorDomain;
@@ -242,7 +245,7 @@ extern NSInteger const PZInternalError;
 - (void)bindToPromise:(PromiseZ *)promise;
 
 
-/// @name Cancelling a promise
+/// @name Managing callbacks
 
 /**
  * Cancels enqueued on kept or on broken callbacks.

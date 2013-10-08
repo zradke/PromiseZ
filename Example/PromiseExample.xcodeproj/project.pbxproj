@@ -141,8 +141,8 @@
 				74A6570E17FB703500413EE7 /* Main.storyboard */,
 				74A6571117FB703500413EE7 /* PEViewController.h */,
 				74A6571217FB703500413EE7 /* PEViewController.m */,
-				740708B618033589009FBA14 /* Library */,
 				74A6573417FB731500413EE7 /* Operations */,
+				740708B618033589009FBA14 /* Library */,
 				74A6571417FB703500413EE7 /* Images.xcassets */,
 				74A6570317FB703500413EE7 /* Supporting Files */,
 			);

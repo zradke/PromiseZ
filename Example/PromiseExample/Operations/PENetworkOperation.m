@@ -112,12 +112,16 @@ typedef NS_ENUM(NSInteger, PENetworkOperationState) {
     self.data = [NSData dataWithData:self.buffer];
     self.buffer = nil;
     self.state = PENetworkOperationFinished;
+    
+    // Keep the inherited promise
     [self.promise keepWithResult:self.data];
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
     self.error = error;
     self.state = PENetworkOperationFinished;
+    
+    // Break the inherited promise
     [self.promise breakWithReason:error];
 }
 

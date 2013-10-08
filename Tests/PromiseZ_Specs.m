@@ -11,7 +11,7 @@
 
 // Expose private methods and properties
 @interface PromiseZ ()
-@property (strong, nonatomic) NSOperationQueue *handlerQueue;
+@property (strong, nonatomic) NSOperationQueue *resolutionQueue;
 @property (assign, nonatomic) NSInteger recursiveResolutionCount;
 @property (strong, nonatomic) NSRecursiveLock *lock;
 
@@ -23,6 +23,33 @@
 - (void)resolveWithHandlerResult:(id)result;
 - (void)resolveHandlerBlock:(id (^)(id))handlerBlock withDependentPromise:(PromiseZ *)dependentPromise;
 - (instancetype)enqueueOnKept:(PZOnKeptBlock)onKept onBroken:(PZOnBrokenBlock)onBroken returnPromise:(BOOL)shouldReturnPromise;
+@end
+
+@interface OuroboroZ : NSObject <PZThenable>
+@end
+
+@implementation OuroboroZ {
+    NSOperationQueue *_handlerQueue;
+}
+
+- (id)init {
+    if ((self = [super init])) {
+        _handlerQueue = [NSOperationQueue new];
+    }
+    
+    return self;
+}
+
+- (id<PZThenable>)thenOnKept:(PZOnKeptBlock)onKept orOnBroken:(PZOnBrokenBlock)onBroken {
+    [_handlerQueue addOperationWithBlock:^{
+        if (onKept) {
+            onKept(self);
+        }
+    }];
+    
+    return nil;
+}
+
 @end
 
 
@@ -402,9 +429,9 @@ describe(@"promise resolution procedure", ^{
         });
         
         it(@"is rejected when recursion seems infinite", ^{
-            [[[promise should] receive] breakWithReason:any()];
-            [promise setRecursiveResolutionCount:PZMaximumRecursiveResolutionDepth];
-            onKept(nil);
+            OuroboroZ *infiniteThenable = [OuroboroZ new];
+            [promise resolveWithHandlerResult:infiniteThenable];
+            [[expectFutureValue(theValue([promise isBroken])) shouldEventually] beTrue];
         });
     });
     
@@ -423,9 +450,9 @@ describe(@"creating a promise", ^{
     });
     
     it(@"sets up the handler queue", ^{
-        [promise.handlerQueue shouldNotBeNil];
-        [[theValue(promise.handlerQueue.maxConcurrentOperationCount) should] equal:theValue(1)];
-        [[theValue(promise.handlerQueue.isSuspended) should] beTrue];
+        [promise.resolutionQueue shouldNotBeNil];
+        [[theValue(promise.resolutionQueue.maxConcurrentOperationCount) should] equal:theValue(1)];
+        [[theValue(promise.resolutionQueue.isSuspended) should] beTrue];
     });
     
     it(@"is pending", ^{
@@ -455,7 +482,7 @@ describe(@"keeping a promise", ^{
         });
         
         it(@"starts the handler queue to process enqueued blocks", ^{
-            [[theValue([[promise handlerQueue] isSuspended]) should] beFalse];
+            [[theValue([[promise resolutionQueue] isSuspended]) should] beFalse];
         });
         
         it(@"resets the recursive resolution counter", ^{
@@ -502,7 +529,7 @@ describe(@"breaking a promise", ^{
         });
         
         it(@"starts the handler queue to process enqueued blocks", ^{
-            [[theValue([[promise handlerQueue] isSuspended]) should] beFalse];
+            [[theValue([[promise resolutionQueue] isSuspended]) should] beFalse];
         });
     });
     

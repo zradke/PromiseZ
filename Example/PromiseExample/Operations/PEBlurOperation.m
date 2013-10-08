@@ -42,6 +42,8 @@
     CGImageRef cgImage = [context createCGImage:outputImage fromRect:inputImage.extent];
     self.outputImage = [UIImage imageWithCGImage:cgImage];
     CGImageRelease(cgImage);
+    
+    // Keep the inherited promise
     [self.promise keepWithResult:self.outputImage];
 }
 

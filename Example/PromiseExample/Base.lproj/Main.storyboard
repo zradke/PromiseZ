@@ -50,6 +50,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="downloadButton" destination="Pmj-qn-PtC" id="LjP-DO-YbS"/>
                         <outlet property="mainImageView" destination="YXr-wg-vKo" id="hRp-a4-l3G"/>
                         <outlet property="transitionImageView" destination="1wt-wr-B71" id="UvO-bJ-fuG"/>
                     </connections>

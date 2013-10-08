@@ -1,12 +1,12 @@
 namespace :test do
   desc "Run PromiseZ tests for iOS"
   task :ios do
-    $ios_success = system("xctool -workspace Project/PromiseZ.xcworkspace -scheme 'PromiseZ-iOS' -sdk iphonesimulator -configuration Release test")
+    $ios_success = system("xctool -workspace Project/PromiseZ.xcworkspace -scheme 'PromiseZ-iOS' -sdk iphonesimulator -configuration Release clean test")
   end
 
   desc "Run PromiseZ tests for OSX"
   task :osx do
-    $osx_success = system("xctool -workspace Project/PromiseZ.xcworkspace -scheme 'PromiseZ-OSX' -sdk macosx -configuration Release test")
+    $osx_success = system("xctool -workspace Project/PromiseZ.xcworkspace -scheme 'PromiseZ-OSX' -sdk macosx -configuration Release clean test")
   end
 end
 

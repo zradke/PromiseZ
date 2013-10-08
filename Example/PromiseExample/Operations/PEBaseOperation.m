@@ -16,6 +16,7 @@
 
 - (instancetype)init {
     if ((self = [super init])) {
+        // All subclasses of this will have an internal promise
         _promise = [PromiseZ new];
     }
     
@@ -24,6 +25,8 @@
 
 - (void)cancel {
     [super cancel];
+    
+    // Cancelling an operation will break its promise
     NSError *error = [NSError errorWithDomain:@"com.zachradke.promiseExample.errorDomain" code:-998 userInfo:@{NSLocalizedDescriptionKey: @"The operation was cancelled"}];
     [self.promise breakWithReason:error];
 }

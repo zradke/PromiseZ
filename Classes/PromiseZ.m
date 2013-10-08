@@ -8,6 +8,9 @@
 
 #import "PromiseZ.h"
 
+NSString *const PZPromiseWasKeptNotification = @"com.zachradke.promiseZ.notifications.promiseWasKept";
+NSString *const PZPromiseWasBrokenNotification = @"com.zachradke.promiseZ.notifications.promiseWasBroken";
+
 NSInteger const PZMaximumRecursiveResolutionDepth = 30;
 
 NSString *const PZErrorDomain = @"com.zachradke.promiseZ.errorDomain";
@@ -30,7 +33,7 @@ static inline NSString *PZStringFromPromiseState(PZPromiseState state) {
 }
 
 @interface PromiseZ ()
-@property (strong, nonatomic) NSOperationQueue *handlerQueue;
+@property (strong, nonatomic) NSOperationQueue *resolutionQueue;
 @property (assign, nonatomic) NSInteger recursiveResolutionCount;
 @property (strong, nonatomic) NSRecursiveLock *lock;
 
@@ -43,10 +46,10 @@ static inline NSString *PZStringFromPromiseState(PZPromiseState state) {
 
 - (instancetype)init {
     if ((self = [super init])) {
-        _handlerQueue = [NSOperationQueue new];
-        _handlerQueue.name = [NSString stringWithFormat:@"com.zachradke.promiseZ.%p.handlerQueue", self];
-        _handlerQueue.maxConcurrentOperationCount = 1;
-        [_handlerQueue setSuspended:YES];
+        _resolutionQueue = [NSOperationQueue new];
+        _resolutionQueue.name = [NSString stringWithFormat:@"com.zachradke.promiseZ.%p.handlerQueue", self];
+        _resolutionQueue.maxConcurrentOperationCount = 1;
+        [_resolutionQueue setSuspended:YES];
         
         _lock = [NSRecursiveLock new];
         _lock.name = [NSString stringWithFormat:@"com.zachradke.promiseZ.%p.lock", self];
@@ -56,11 +59,11 @@ static inline NSString *PZStringFromPromiseState(PZPromiseState state) {
 }
 
 - (void)dealloc {
-    [_handlerQueue cancelAllOperations];
+    [_resolutionQueue cancelAllOperations];
 }
 
 - (void)cancelAllCallbacks {
-    [self.handlerQueue cancelAllOperations];
+    [self.resolutionQueue cancelAllOperations];
 }
 
 - (NSString *)description {
@@ -92,11 +95,19 @@ static inline NSString *PZStringFromPromiseState(PZPromiseState state) {
     return ([self bindingPromise] != nil);
 }
 
++ (NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key {
+    if ([key isEqualToString:@"isPending"] || [key isEqualToString:@"isKept"] || [key isEqualToString:@"isBroken"]) {
+        return [NSSet setWithObject:@"state"];
+    }
+    
+    return [super keyPathsForValuesAffectingValueForKey:key];
+}
+
 
 #pragma mark - Keeping, breaking, and binding promises
 
 - (void)satisfyWithResult:(id)result state:(PZPromiseState)state {
-    if (![self isPending] || ([self isBound] && [[self bindingPromise] result] != result)) {
+    if (state == PZPromiseStatePending || ![self isPending] || ([self isBound] && [[self bindingPromise] result] != result)) {
         return;
     }
     
@@ -105,7 +116,13 @@ static inline NSString *PZStringFromPromiseState(PZPromiseState state) {
     self.result = result;
     self.state = state;
     self.recursiveResolutionCount = 0;
-    [[self handlerQueue] setSuspended:NO];
+    [[self resolutionQueue] setSuspended:NO];
+    
+    if ([self isKept]) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:PZPromiseWasKeptNotification object:self];
+    } else if ([self isBroken]) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:PZPromiseWasBrokenNotification object:self];
+    }
     
     [self.lock unlock];
 }
@@ -224,7 +241,7 @@ static inline NSString *PZStringFromPromiseState(PZPromiseState state) {
         }
     }];
     
-    [self.handlerQueue addOperation:operation];
+    [self.resolutionQueue addOperation:operation];
     
     return returnPromise;
 }
