@@ -1,5 +1,9 @@
 #Changes
 
+## 0.2.0 (2015-03-25)
+
+* Rebuilds the framework to work better with Cocoapods and Travis-CI.
+
 ##0.1.1 (2013-10-07)
 
 ###Enhancements

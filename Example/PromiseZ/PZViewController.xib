@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6751" systemVersion="14C1510" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6736"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="PZViewController">
+            <connections>
+                <outlet property="button" destination="iTS-Z8-vYH" id="vGt-lo-JEf"/>
+                <outlet property="mainImageView" destination="NhI-u6-ue2" id="58k-cU-d2W"/>
+                <outlet property="transitionImageView" destination="ZQI-87-UfD" id="rx4-8C-thD"/>
+                <outlet property="view" destination="iN0-l3-epB" id="Dqy-r2-MvL"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="NhI-u6-ue2">
+                    <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                </imageView>
+                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="ZQI-87-UfD">
+                    <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                </imageView>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iTS-Z8-vYH">
+                    <rect key="frame" x="277" y="530" width="46" height="30"/>
+                    <state key="normal" title="Button">
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <connections>
+                        <action selector="didTapButton:" destination="-1" eventType="touchUpInside" id="ZRs-9M-f1t"/>
+                    </connections>
+                </button>
+            </subviews>
+            <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="ZQI-87-UfD" secondAttribute="bottom" id="9ri-Wy-nAj"/>
+                <constraint firstAttribute="bottom" secondItem="iTS-Z8-vYH" secondAttribute="bottom" constant="40" id="Jvg-Xq-Hfw"/>
+                <constraint firstAttribute="bottom" secondItem="NhI-u6-ue2" secondAttribute="bottom" id="N2m-fM-hyE"/>
+                <constraint firstAttribute="trailing" secondItem="ZQI-87-UfD" secondAttribute="trailing" id="Ptb-9f-eyB"/>
+                <constraint firstItem="ZQI-87-UfD" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="Ssj-Mt-i7C"/>
+                <constraint firstItem="NhI-u6-ue2" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="Xnd-6U-3Gr"/>
+                <constraint firstAttribute="centerX" secondItem="iTS-Z8-vYH" secondAttribute="centerX" id="aKg-XT-1pc"/>
+                <constraint firstAttribute="trailing" secondItem="NhI-u6-ue2" secondAttribute="trailing" id="igs-0c-n2e"/>
+                <constraint firstItem="ZQI-87-UfD" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="meW-Ec-Jna"/>
+                <constraint firstItem="NhI-u6-ue2" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="ys2-IQ-gtl"/>
+            </constraints>
+        </view>
+    </objects>
+</document>

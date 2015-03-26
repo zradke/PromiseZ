@@ -1,0 +1,9 @@
+source 'https://github.com/CocoaPods/Specs.git'
+
+pod "PromiseZ", :path => "../"
+pod "KVOController"
+pod "AFNetworking"
+
+target 'Tests', :exclusive => true do
+  pod "OCMock"
+end

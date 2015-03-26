@@ -1,153 +1,122 @@
 #PromiseZ
 
-[![Build Status](https://travis-ci.org/zradke/PromiseZ.png)](https://travis-ci.org/zradke/PromiseZ)
+[![CI Status](http://img.shields.io/travis/zradke/PromiseZ.svg?style=flat)](https://travis-ci.org/zradke/PromiseZ)
+[![Version](https://img.shields.io/cocoapods/v/PromiseZ.svg?style=flat)](http://cocoapods.org/pods/PromiseZ)
+[![License](https://img.shields.io/cocoapods/l/PromiseZ.svg?style=flat)](http://cocoapods.org/pods/PromiseZ)
+[![Platform](https://img.shields.io/cocoapods/p/PromiseZ.svg?style=flat)](http://cocoapods.org/pods/PromiseZ)
 
 A high level implementation of the [Promises/A+ spec](https://github.com/promises-aplus/promises-spec) which borrows heavily and shamelessly from the [RXPromise implementation](https://github.com/couchdeveloper/RXPromise).
 
 ---
 
-#Getting set up
-There are a few different installation options, ordered here from least to most complex (as far as I can tell).
+## Installation
 
-* Drag-n-drop
-* Cocoapods
-* Build a framework
-
-Regardless of the installation method, you can actually start working with the PromiseZ class by simply importing it wherever you need:
-
-```objc
-#import "PromiseZ.h"
-```
-
-##Drag-n-drop
-PromiseZ is really just two files: **PromiseZ.h** and **PromiseZ.m**. You can clone this repo, and simply drag those two files into your Xcode project. Make sure the "Copy items into destination group's folder (if needed)" checkbox is checked, and your main project target is checked, and that none of the names clash.
-
-##Cocoapods
 Cocoapods is a nice dependency manager for iOS and OSX apps. Take a look at the [Cocoapods website](https://github.com/CocoaPods/CocoaPods) to get started if you're not familiar.
 
-Once cocoapods is set up, just add…
+Once cocoapods is set up, just add the following to your Podfile:
 
-```ruby
-pod 'PromiseZ'
-```
+    pod 'PromiseZ'
 
-to your Podfile and run `pod install` from the command line!
+And when you're importing the library:
 
-##Build framework
-If you really like frameworks for some reason, you can clone this repo and change the scheme to `PromiseZ-iOS-Universal` or `PromiseZ-OSX` (depending on which platform you are running on). You may need to change the configuration if you want a `Release` version. After that, run the scheme. In the `Products` folder you should see some things with black text. Right click and choose `Show in Finder` to easily get to the build directory. If all the products are red, then navigate to the derived data folder (probably easiest through the Organizer). There you should see a **PromiseZ.framework** folder which you can drag and drop into your project.
+	#import <PromiseZ/PZPromise.h>
 
-Having trouble finding the framework? Here are the paths from the PromiseZ derived data folder depending on the scheme used:
+## Putting it to use
 
-* iOS: `Build/Products/<Configuration>-iphone*/PromiseZ.framework`
-* OSX: `Build/Products/<Configuration>/PromiseZ.framework`
-
----
-
-#Putting it to use
-
-##What is it good for?
 At its core a promise represents an undetermined result. For example, when making a network request, the data is not available immediately, and the request can either be successful with a result or fail for some reason. Promises represent all those states and potential values in one object.
 
-##What's the catch?
-The PromiseZ framework and object represent only the promise part of the equation. The other part is that in order for it to be any use, **your async methods must generate, return, keep, and break PromiseZ**. See the section on being a PromiseZ provider for more info on that!
+The `PZPromise` class conforms to the `<PZThenable>` protocol and conforms to the Promises/A+ spec. It can be initialized via the `-init` method.
 
-##How do I work with a PromiseZ?
-First, you'll need to get a hold of one from some method. Then, you can use the `thenOnKept:orOnBroken:` method on that PromiseZ to indicate actions that should take place when the promise is kept or broken. There's no limit to the number of times you can call `thenOnKept:orOnBroken:` on a single promise, and when the promise is kept or broken, all the appropriate handlers will be called. What's more, `thenOnKept:orOnBroken:` will also return *another* PromiseZ which you can put more `thenOnKept:orOnBroken:` conditions on! 
+Let's say we have a method which does some background processing asynchronously:
 
-Let's see an example:
+	- (PZPromise *)doSomethingAsync
+	{
+		// This promise will need to be retained somehow so it can be notified of it's eventual value or failed reason.
+		PZPromise *promise = [PZPromise new];
+		...
+		
+		return promise;
+	}
 
-```objc
-PromiseZ *promise1 = [self doSomethingAsync];
-PromiseZ *promise2 = [promise1 thenOnKept:^id(id result) {
-	// Do something with result
-} orOnBroken:^id(NSError *reason) {
-	// Handle the error
-}];
-```
+At the most basic level, we can be notified when the method completes by adding on-kept and on-broken blocks:
 
-It's important to note that you don't have to pass an on-kept or on-broken block if you don't want to. The successful result or failure reason will trickle down the chain until a promise does handle it with a block, or into nothingness if no one handles it.
-
-For even more flexibility, you can choose to return something from an on-kept or on-broken block. These return values will be used to resolve the returned promise. Confusing, right? 
-
-Let's see an example:
-
-```objc
-PromiseZ *originalPromise = [self doSomethingAsync];
-PromiseZ *returnedPromise = [originalPromise thenOnKept:^id(id result) {
-	PromiseZ *otherPromise = [self doAnotherAsyncOperationWithValue:result];
-	return otherPromise;
-} orOnFailure:nil];
-```
-In this example, `otherPromise` is returned in the on-kept block, which means that `returnedPromise` will automatically be kept or broken when `otherPromise` is kept or broken. You don't have to return just PromiseZ either, any value will work!
-
-As a last note, **handler blocks are not invoked on the main queue**. This means that performing UI changes in handler blocks (like reloading table views, etc.) can result in strange behavior unless you dispatch those changes on the main queue using GCD or NSOperationQueue.
-
-For example:
-
-```objc
-PromiseZ *returnPromise = [[self doSomethingAsync] thenOnSuccess:^id(id result) {
-	[[NSOperationQueue mainQueue] addOperationWithBlock:^{
-		[tableView reloadData];
+	PZPromise *promise = [self doSomethingAsync];
+	[promise thenOnKept:^id(id value) {
+		// Do something with the result
+		...
+		return nil; // The return value doesn't matter in this case
+	} onBroken:^id(NSError *reason) {
+		// Do something to handle the failure
+		...
+		return nil; // The return value doesn't matter in this case
 	}];
-	return nil;
-} orOnFailure:nil];
-```
 
-##C-c-c-combo!
-Because `thenOnKept:orOnBroken:` returns another PromiseZ, you can chain together a bunch of dependent tasks. Also, because results and failures will trickle down until they are caught, you can create a single on-broken block to catch any failures at any point in the chain!
+But now let's say we want to do something else with a successful result:
 
-Let's rewrite the previous example to take advantage of chaining:
+	- (PZPromise *)doSomethingElseAsyncWithResult:(id)result
+	{
+		...
+	}
 
-```objc
-PromiseZ *finalPromise = [[[self doSomethingAsync] thenOnKept:^id(id result) {
-	return [self doAnotherAsyncOperationWithValue:result];
-} orOnBroken:nil] thenOnKept:^id(id result) {
-	return [self doFinalAsyncOperationWithValue:result];
-} orOnBroken:^id(NSError *reason) {
-	// Do some sort of error handling
-	NSLog(@"Error: %@", [reason localizedDescription]);
-}];
-```
+We can be notified when this dependent promise completes because `-thenOnKept:onBroken:` will actualy return another promise!
 
-##Being a PromiseZ provider
-PromiseZ are only useful if they are used by your asynchronous methods. Specific implementations are a bit beyond the scope of this read-me, but generally there are a few points to consider:
+	PZPromise *promiseA = [self doSomethingAsync];
+	PZPromise *promiseB = [promise thenOnKept:^id(id value) {
+		// We return the next promise we want to execute
+		return [self doSomethingElseAsyncWithResult:value];
+	} onBroken:^id(NSError *reason) {
+		// Do something to handle the failure
+		...
+		return nil; // The return value doesn't matter in this case
+	}];
 
-* When an async method is called, return a PromiseZ object
-* If the async method resolves in success, call `keepWithResult:` on the promise, passing the successful result.
-* If the async method fails for some reason, call `breakWithReason:` on the promise, passing an NSError representing the reason.
+In this case `promiseB` will resolve whenever the promise returned by `doSomethingElseAsyncWithResult:` resolves.
+
+But in our example we don't realy need `promiseA`, so we can ignore it and start chaining:
+
+	PZPromise *promise = [[self doSomethingAsync] thenOnKept:^id(id value) {
+		return [self doSomethingElseAsyncWithResult:value];
+	} onBroken:^id(NSError *reason) {
+		...
+		return nil;
+	}];
+
+The returned promise will only be resolved after `-doSomethingAsync` resolves its promise and `-doSomethingElseAsyncWithResult:` resolves. We can continue chaining as long as we need, allowing us to handle errors in a single on-broken block:
+
+	PZPromise *promise = [[[self doSomethingAsync] thenOnKept:^id(id value) {
+		return [doSomethingElseAsyncWithResult:value];
+	} onBroken:nil] thenOnKept:^id(id value) {
+		return [doAnotherThingWithAnotherResult:value];
+	} onBroken:nil] thenOnKept:^id(id value) {
+		return [doFinalThingWithFinalResult:value];
+	} onBroken:^id(NSError *error) {
+		// Handle any of the errors that other promises in the chain encountered
+		...
+		return nil;
+	}];
+
+Note that we can pass `nil` for the on-broken block. In fact, both the on-kept and on-broken blocks are optional. If they are nil, the promise simply passes on its state and value to the returned promise. In fact, aside from returning promises from the on-kept or on-broken blocks, you can also return `<PZThenable>` conforming objects, or plain objects, each which has a different resolution as defined by the Promises/A+ spec.
+
+## What's the catch?
+
+The `PZPromise` class represents only part of the promise equation. The other part is that in order for it to be any use, **your async methods must generate, return, keep, and break `PZPromise` instances**. Specific implementations are a bit beyond the scope of this read-me (though you can take a look at the example app for some inspiration), but generally there are a few points to consider:
+
+* When an async method is called, return a `PZPromise` instance.
+* If the async method resolves in success, call `-keepWithValue:` on the promise, passing the successful result.
+* If the async method fails for some reason, call `-breakWithReason:` on the promise, passing an NSError representing the reason.
 
 A key point in this implementation is that the class with the async method needs to keep a hold of its promises and resolve the proper promise with the proper value (success or failure). Once you've got that down, it's all dandy!
 
 ---
 
-#Getting into the snickel-frits
-Is a high-level overview not enough? This section gets into some more esoteric points about the PromiseZ implementation.
+## Getting into the snickel-frits
 
-##Becoming "thenable"
-The PZThenable protocol defines the `thenOnKept:orOnBroken:` method which conformers must implement. PromiseZ naturally adopts this protocol, but it is left exposed separately for cases when a method wishes to return a custom object instead of the normal PromiseZ. Typically, though, the PromiseZ class should suffice.
+Is a high-level overview not enough? This section gets into some more esoteric points about the `PZPromise` implementation.
 
-##Concurrency
-* PromiseZ each have an NSOperationQueue which enqueues the handler blocks from `thenOnKept:orOnFailure:`
-* Handler blocks are executed on whatever dispatch queue the handler queue provides. Thus to perform UI changes, you should dispatch to the main queue using GCD or NSOperationQueues.
-* Promise resolutions (`keepWithResult:` or `breakWithReason`) are synchronized to self
-* No synchronization guarantees are placed on retrieving the result or state of PromiseZ (i.e. all properties are nonatomic)
+### Becoming "thenable"
+The `<PZThenable>` protocol defines the `-thenOnKept:onBroken:` method which conformers must implement. Though `PZPromise` conforms to the protocol, it is left independent for cases when a method wishes to return a custom object instead of the normal `PZPromise`. Typically, though, the `PZPromise` class should suffice.
 
-##Guarantees
-* A promise will be pending, kept, or broken, but never more than one
-* A promise will resolve enqueued blocks from `thenOnKept:orOnBroken:` in the order they are added
-* A promise will catch exceptions thrown in a handler block
-* A promise will stop infinite resolution recursion caused by a `<PZThenable>` if the recursion depth is past 30
-* A bound promise will not respond to `keepWithResult:` or `breakWithReason:` unless the result/reason is the exact object which the binding promise was resolved with.
-
-##Testing
-This library/class/framework was unit tested using [Kiwi](https://github.com/allending/Kiwi/). If you would like to run the tests yourself, simply clone this repo, `cd` into the `Project` directory and run `pod install` to get Kiwi set up.
-
-###Inside Xcode
-Then open up the `PromiseZ.xcworkspace` and in Xcode change the scheme to `PromiseZ-iOS` or `PromiseZ-OSX` and from the top menu select `Product/Test` or use the shortcut `CMD+U`.
-
-###From the command line
-You'll need one additional step, which can become two steps if you don't have [Homebrew](http://brew.sh/) installed. If not, first install Homebrew. Once that's done, run `brew install xctool`. [XCTool](https://github.com/facebook/xctool) is a neat little command line utility made by Facebook that really simplifies command line testing.
-
-In the main directory of the repo, just run `rake test` to run both iOS and OSX tests, or run `rake test:<ios/osx>` to just test one platform!
-
-This setup is taken almost directly from [AFNetworking's implementation](https://github.com/AFNetworking/AFNetworking/blob/master/Rakefile), and the associated [NSHipster article about unit-testing](http://nshipster.com/unit-testing/), so I'd highly recommend checking them out for more details.
+### Concurrency
+* `PZPromise` should be thread safe, and can be resolved (`-keepWithValue:` or `-breakWithReason:`) on any thread regardless of where they were created.
+* As per the Promises/A+ spec, on-kept or on-broken blocks are always executed asynchronously on at least the next run-loop, even if the receiving `PZPromise` has already been kept or broken.
+* On-kept and on-broken blocks make no guarantees about what thread they are called on. For this reason, it is important when making UI changes to always dispatch back to the main thread.
