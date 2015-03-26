@@ -39,6 +39,11 @@ NSString *const PZErrorDomain = @"com.zachradke.promiseZ.errorDomain";
 
 @implementation PZPromise
 
++ (instancetype)promise
+{
+    return [[self alloc] init];
+}
+
 - (instancetype)init
 {
     if ((self = [super init]))
