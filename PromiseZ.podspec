@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name                  = "PromiseZ"
-  s.version               = "0.2.0"
+  s.version               = "0.3.0"
   s.summary               = "Promises/A+ done right and done small."
   s.homepage              = "https://github.com/zradke/PromiseZ"
   s.license               = 'MIT'

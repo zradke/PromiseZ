@@ -15,7 +15,7 @@
  *
  *  @param value The successfully acquired value by the thenable.
  *
- *  @return An optional return value which influences the promise returned by the thenable.
+ *  @return A return value which influences the promise returned by the thenable.
  *
  */
 typedef id(^PZOnKeptBlock)(id value);
@@ -27,7 +27,7 @@ typedef id(^PZOnKeptBlock)(id value);
  *
  *  @param reason The reason the thenable failed to acquire a value.
  *
- *  @return An optional return value which influences the promise returned by the thenable.
+ *  @return A return value which influences the promise returned by the thenable.
  */
 typedef id(^PZOnBrokenBlock)(NSError *reason);
 
@@ -86,7 +86,7 @@ enum
 @required
 
 /**
- *  Asks the receiver to notify the caller via the on-kept and on-broken blocks when it has succeeded or failed in an arbitrary task. The method should return another PZThenable conforming object whose state will depend on the success or failure of the receiver, as well as any values returned from the blocks.
+ *  Asks the receiver to notify the caller via the on-kept and on-broken blocks when it has succeeded or failed in an arbitrary task. The method should return another PZThenable conforming object whose resolution will depend on the success or failure of the receiver, as well as any values returned from the blocks.
  *
  *  @see PZPromise
  *
@@ -103,7 +103,9 @@ enum
 /**
  *  A concrete conformer of the PZThenable protocol and the Promises/A+ spec. A PZPromise represents a possible future value which can be asynchronously accessed.
  *
- *  Because PZPromise conforms to the [Promises/A+ spec](https://promisesaplus.com), it has a specific implementation of the [PZThenable thenOnKept:onBroken:] method. First, the method will always return a new promise. Second, if you provide an on-kept or on-broken block, the return value of the block will resolve the new returned promise. If the block returns a PZPromise, the new promise will be locked (i.e. -keepWithValue: and -breakWithReason: will have no affect) until the block's promise resolves. If a PZThenable is returned the effect is similar, but the new promise can be independently resolved before the PZThenable resolves. And any other object is returned, it will -keepWithValue: the new promise using the block value. In the absense of an on-kept or on-broken block, the new promise will simply adopt the state of the receiving promise.
+ *  Because PZPromise conforms to the [Promises/A+ spec](https://promisesaplus.com), it has a specific implementation of the [PZThenable thenOnKept:onBroken:] method. First, the method will always return a new promise which cannot be resolved manually via the -keepWithValue: or -breakWithReason: methods. Second, if you provide an on-kept or on-broken block, the return value of the block will resolve the new returned promise. If the block returns a PZPromise or PZThenable, the returned promise will adopt the state of the block's promise. And if any other object is returned (including `nil`), it will -keepWithValue: the new promise using the block value. In the absense of an on-kept or on-broken block, the new promise will simply adopt the state of the receiving promise.
+ *
+ *  @note The [PZThenable thenOnKept:onBroken:] method in PZPromise is not guaranteed to execute blocks on the main thread.
  */
 @interface PZPromise : NSObject <PZThenable>
 
@@ -147,16 +149,16 @@ enum
 @property (assign, nonatomic, readonly) PZPromiseState state;
 
 /**
- *  The value the promise was kept with, if it exists.
+ *  The value the promise was kept with, if it exists. This is KVC compliant.
  *
- *  @note It is possible to keep a promise with `nil`, so to find out if the receiver has been kept, use the state property instead. This is KVC compliant.
+ *  @note It is possible to keep a promise with `nil`, so to find out if the receiver has been kept, use the state property instead.
  */
 @property (strong, nonatomic, readonly) id keptValue;
 
 /**
- *  The reason the promise was broken, if it exists.
+ *  The reason the promise was broken, if it exists. This is KVC compliant.
  *
- *  @note It is possible to break a promise with `nil`, so to find out if the receiver is broken, use the state property instead. This is KVC compliant.
+ *  @note It is possible to break a promise with `nil`, so to find out if the receiver is broken, use the state property instead.
  */
 @property (strong, nonatomic, readonly) NSError *brokenReason;
 
@@ -166,21 +168,25 @@ enum
  */
 
 /**
- *  Asynchronously keeps the receiver with the given value.
+ *  Keeps the receiver with the given value. This method is thread safe.
  *
  *  @note This method will have no effect if the promise is already kept, broken, or if it is bound to another promise via the [PZThenable thenOnKept:onBroken:] method.
  *
  *  @param value The value to keep the promise with. This can be nil.
+ *
+ *  @return YES if the receiver was kept, or NO if it could not be kept.
  */
-- (void)keepWithValue:(id)value;
+- (BOOL)keepWithValue:(id)value;
 
 /**
- *  Asynchronously breaks the receiver with the given reason.
+ *  Breaks the receiver with the given reason. This method is thread safe.
  *
  *  @note This method will have no effect if the promise is already kept, broken, or if it is bound to another promise via the [PZThenable thenOnKept:onBroken:] method.
  *
  *  @param reason The reason to break the promise. This can be nil.
+ *
+ *  @return YES if the receiver was broken, or NO if it could not be broken.
  */
-- (void)breakWithReason:(NSError *)reason;
+- (BOOL)breakWithReason:(NSError *)reason;
 
 @end

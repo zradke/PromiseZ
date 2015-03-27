@@ -35,9 +35,7 @@
     [super viewDidLoad];
     
     self.operationQueue = [NSOperationQueue new];
-    
-    self.transitionImageView.hidden = YES;
-    
+        
     [self.KVOControllerNonRetaining observe:self keyPath:NSStringFromSelector(@selector(isProcessing)) options:0 action:@selector(didChangeProcessing)];
     [self didChangeProcessing];
 }
@@ -117,17 +115,16 @@
 - (void)animateImage:(UIImage *)image
 {
     dispatch_block_t block = ^{
+        UIImageView *bottomImageView = self.mainImageView;
         UIImageView *transitionView = self.transitionImageView;
         
         transitionView.image = image;
         transitionView.layer.opacity = 0.0;
-        transitionView.hidden = NO;
         
         [UIView animateWithDuration:0.25 animations:^{
             transitionView.layer.opacity = 1.0;
         } completion:^(BOOL finished) {
-            self.mainImageView.image = image;
-            transitionView.hidden = YES;
+            bottomImageView.image = image;
         }];
     };
     

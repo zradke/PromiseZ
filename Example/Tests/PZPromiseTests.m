@@ -333,7 +333,6 @@
     PZPromise *promiseB = [promiseA thenOnKept:^id(id value) {
         return thenable;
     } onBroken:nil];
-    id partialB = OCMPartialMock(promiseB);
     
     XCTestExpectation *expectationA = [self expectationWithDescription:@"Thenable should be asked to then"];
     [self.KVOController observe:thenable keyPath:NSStringFromSelector(@selector(thenCalledCount)) options:0 block:^(id observer, id object, NSDictionary *change) {
@@ -346,7 +345,6 @@
     [promiseA keepWithValue:@"A"];
     
     [self waitForExpectationsWithTimeout:5.0 handler:nil];
-    [self.KVOController unobserve:thenable];
     
     XCTAssertNotNil(thenable.onKept);
     XCTAssertNotNil(thenable.onBroken);
@@ -361,20 +359,13 @@
     
     NSError *error = [NSError errorWithDomain:PZErrorDomain code:900 userInfo:nil];
     
-    OCMExpect([partialB keepWithValue:@"B"]).andForwardToRealObject;
-    [[partialB reject] keepWithValue:@"C"];
-    [[partialB reject] breakWithReason:error];
-    
     thenable.onKept(@"B");
     thenable.onKept(@"C");
     thenable.onBroken(error);
     
     [self waitForExpectationsWithTimeout:5.0 handler:nil];
-    [self.KVOController unobserve:promiseB];
     
     XCTAssertEqualObjects(promiseB.keptValue, @"B");
-    
-    OCMVerifyAll(partialB);
 }
 
 - (void)testThenOnKeptReturnsOuroboros
@@ -592,7 +583,6 @@
     PZPromise *promiseB = [promiseA thenOnKept:nil onBroken:^id(NSError *reason) {
         return thenable;
     }];
-    id partialB = OCMPartialMock(promiseB);
     
     XCTestExpectation *expectationA = [self expectationWithDescription:@"The thennable should then."];
     [self.KVOController observe:thenable keyPath:NSStringFromSelector(@selector(thenCalledCount)) options:0 block:^(id observer, id object, NSDictionary *change) {
@@ -606,7 +596,6 @@
     [promiseA breakWithReason:errorA];
     
     [self waitForExpectationsWithTimeout:5.0 handler:nil];
-    [self.KVOController unobserve:thenable];
     
     XCTAssertNotNil(thenable.onKept);
     XCTAssertNotNil(thenable.onBroken);
@@ -622,20 +611,13 @@
     NSError *errorB = [NSError errorWithDomain:PZErrorDomain code:900 userInfo:nil];
     NSError *errorC = [NSError errorWithDomain:PZErrorDomain code:800 userInfo:nil];
     
-    OCMExpect([partialB breakWithReason:errorB]).andForwardToRealObject;
-    [[partialB reject] breakWithReason:errorC];
-    [[partialB reject] keepWithValue:@"B"];
-    
     thenable.onBroken(errorB);
     thenable.onBroken(errorC);
     thenable.onKept(@"B");
     
     [self waitForExpectationsWithTimeout:5.0 handler:nil];
-    [self.KVOController unobserve:promiseB];
     
     XCTAssertEqualObjects(promiseB.brokenReason, errorB);
-    
-    OCMVerifyAll(partialB);
 }
 
 - (void)testThenOnBrokenReturnsOuroboros

@@ -34,7 +34,6 @@ Let's say we have a method which does some background processing asynchronously:
 		// This promise will need to be retained somehow so it can be notified of it's eventual value or failed reason.
 		PZPromise *promise = [PZPromise new];
 		...
-		
 		return promise;
 	}
 
@@ -51,14 +50,14 @@ At the most basic level, we can be notified when the method completes by adding 
 		return nil; // The return value doesn't matter in this case
 	}];
 
-But now let's say we want to do something else with a successful result:
+Notice that the on-kept and on-broken blocks actualy return a value. That's because the `-thenOnKept:onBroken:` method actually returns another `<PZThenable>`! This new promise is resolved depending on what you return from the on-kept and on-broken blocks, or if you don't provide a block, on the result of the original promise. So in our example let's say we want to do something else with a successful result:
 
 	- (PZPromise *)doSomethingElseAsyncWithResult:(id)result
 	{
 		...
 	}
 
-We can be notified when this dependent promise completes because `-thenOnKept:onBroken:` will actualy return another promise!
+Instead of returning `nil` from our on-kept block, we can return that promise:
 
 	PZPromise *promiseA = [self doSomethingAsync];
 	PZPromise *promiseB = [promise thenOnKept:^id(id value) {
@@ -67,7 +66,9 @@ We can be notified when this dependent promise completes because `-thenOnKept:on
 	} onBroken:^id(NSError *reason) {
 		// Do something to handle the failure
 		...
-		return nil; // The return value doesn't matter in this case
+		
+		// We can return an already broken promise so promiseB will also be broken.
+		return [[PZPromise alloc] initWithBrokenReason:reason];
 	}];
 
 In this case `promiseB` will resolve whenever the promise returned by `doSomethingElseAsyncWithResult:` resolves.
@@ -78,10 +79,10 @@ But in our example we don't realy need `promiseA`, so we can ignore it and start
 		return [self doSomethingElseAsyncWithResult:value];
 	} onBroken:^id(NSError *reason) {
 		...
-		return nil;
+		return [[PZPromise alloc] initWithBrokenReason:reason];
 	}];
 
-The returned promise will only be resolved after `-doSomethingAsync` resolves its promise and `-doSomethingElseAsyncWithResult:` resolves. We can continue chaining as long as we need, allowing us to handle errors in a single on-broken block:
+The returned promise will only be resolved after `-doSomethingAsync` resolves its promise and `-doSomethingElseAsyncWithResult:` resolves. We can continue chaining as long as we need:
 
 	PZPromise *promise = [[[self doSomethingAsync] thenOnKept:^id(id value) {
 		return [doSomethingElseAsyncWithResult:value];
@@ -92,16 +93,18 @@ The returned promise will only be resolved after `-doSomethingAsync` resolves it
 	} onBroken:^id(NSError *error) {
 		// Handle any of the errors that other promises in the chain encountered
 		...
-		return nil;
+		return [[PZPromise alloc] initWithBrokenReason:reason];
 	}];
 
-Note that we can pass `nil` for the on-broken block. In fact, both the on-kept and on-broken blocks are optional. If they are nil, the promise simply passes on its state and value to the returned promise. In fact, aside from returning promises from the on-kept or on-broken blocks, you can also return `<PZThenable>` conforming objects, or plain objects, each which has a different resolution as defined by the Promises/A+ spec.
+Note that we are passing `nil` for the on-broken block. Remember that both the on-kept and on-broken blocks are optional. If they are `nil`, the promise simply passes on its state and value to the returned promise. In this way, the final on-broken block will actually will catch any of the previous promises' failures! The same would work for on-kept blocks as well.
+
+Promises returned by the `-thenOnKept:onBroken:` method are different from ones created via `-init` or `+new` in that their resolution depends on the initial promise or the block return values. For this reason, they are considered "bound" and **bound promises cannot be manually kept or broken**. Calling `-keepWithValue:` or `-breakWithReason:` on a bound promise will have no effect.
 
 ## What's the catch?
 
 The `PZPromise` class represents only part of the promise equation. The other part is that in order for it to be any use, **your async methods must generate, return, keep, and break `PZPromise` instances**. Specific implementations are a bit beyond the scope of this read-me (though you can take a look at the example app for some inspiration), but generally there are a few points to consider:
 
-* When an async method is called, return a `PZPromise` instance.
+* When an async method is called, return a pending `PZPromise` instance.
 * If the async method resolves in success, call `-keepWithValue:` on the promise, passing the successful result.
 * If the async method fails for some reason, call `-breakWithReason:` on the promise, passing an NSError representing the reason.
 

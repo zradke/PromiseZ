@@ -7,8 +7,9 @@
 //
 
 #import "PZPromise.h"
+#import <libkern/OSAtomic.h>
 
-NSInteger const PZMaximumResolutionRecursionDepth = 10;
+NSInteger const PZMaximumResolutionRecursionDepth = 30;
 
 NSString *const PZErrorDomain = @"com.zachradke.promiseZ.errorDomain";
 
@@ -16,28 +17,36 @@ NSString *const PZErrorDomain = @"com.zachradke.promiseZ.errorDomain";
 
 - (instancetype)initWithPromise:(PZPromise *)promise onKept:(PZOnKeptBlock)onKept onBroken:(PZOnBrokenBlock)onBroken NS_DESIGNATED_INITIALIZER;
 
-@property (weak, nonatomic) PZPromise *promise;
+@property (weak, nonatomic, readonly) PZPromise *promise;
 @property (copy, nonatomic, readonly) PZOnKeptBlock onKept;
 @property (copy, nonatomic, readonly) PZOnBrokenBlock onBroken;
 
-@property (strong, nonatomic) id<PZThenable> retainedThenable;
-
+// These properties are atomic and readwrite because they can be changed from multiple threads during promise resolution
+@property (strong, atomic) id<PZThenable> retainedThenable;
 @property (assign, atomic) NSUInteger resolutionCount;
 
 @end
 
 
+#pragma mark - PZPromise
+
 @interface PZPromise ()
+{
+    OSSpinLock _spinLock;
+}
 
-@property (strong, nonatomic) dispatch_queue_t isolationQueue;
-@property (strong, nonatomic) NSOperationQueue *resolutionQueue;
-
-@property (strong, nonatomic, readonly) PZPromise *parentPromise;
-@property (strong, atomic) PZPromise *bindingPromise;
+@property (strong, nonatomic, readonly) NSOperationQueue *resolutionQueue;
+@property (strong, nonatomic, readonly) PZPromise *bindingPromise;
 
 @end
 
 @implementation PZPromise
+@synthesize state = _state;
+@synthesize keptValue = _keptValue;
+@synthesize brokenReason = _brokenReason;
+@synthesize bindingPromise = _bindingPromise;
+
+#pragma mark Creating promises
 
 - (instancetype)init
 {
@@ -45,10 +54,14 @@ NSString *const PZErrorDomain = @"com.zachradke.promiseZ.errorDomain";
     {
         _state = PZPromiseStatePending;
         
-        _isolationQueue = dispatch_queue_create(nil, DISPATCH_QUEUE_SERIAL);
+        // The spinlock will enforce thread safety for our properties
+        _spinLock = OS_SPINLOCK_INIT;
         
+        // The resolution queue is how we'll stack up thenOnKept:onBroken: blocks to be resolved later.
         _resolutionQueue = [NSOperationQueue new];
         _resolutionQueue.maxConcurrentOperationCount = 1;
+        
+        // The resolution queue must stay suspended until the promise is resolved or broken.
         [_resolutionQueue setSuspended:YES];
     }
     
@@ -79,14 +92,14 @@ NSString *const PZErrorDomain = @"com.zachradke.promiseZ.errorDomain";
     return self;
 }
 
-- (instancetype)initWithParent:(PZPromise *)parentPromise
+- (instancetype)initWithBindingPromise:(PZPromise *)bindingPromise;
 {
     if (!(self = [self init]))
     {
         return nil;
     }
     
-    _parentPromise = parentPromise;
+    _bindingPromise = bindingPromise;
     
     return self;
 }
@@ -94,7 +107,26 @@ NSString *const PZErrorDomain = @"com.zachradke.promiseZ.errorDomain";
 - (void)dealloc
 {
     [_resolutionQueue cancelAllOperations];
+    
+    // As per the NSOperationQueue documentation, a suspended queue never clears out its operations even when cancelled, so we un-suspend the queue just in case here.
+    _resolutionQueue.suspended = NO;
 }
+
+
+#pragma mark Keeping and breaking promises
+
+- (BOOL)keepWithValue:(id)value
+{
+    return [self _transitionToState:PZPromiseStateKept valueOrReason:value isResolved:NO];
+}
+
+- (BOOL)breakWithReason:(NSError *)reason
+{
+    return [self _transitionToState:PZPromiseStateBroken valueOrReason:reason isResolved:NO];
+}
+
+
+#pragma mark NSObject
 
 - (NSString *)description
 {
@@ -114,12 +146,7 @@ NSString *const PZErrorDomain = @"com.zachradke.promiseZ.errorDomain";
             
             if (self.bindingPromise)
             {
-                [mutableDescription appendFormat:@", boundTo:<%@:%p>", [self.bindingPromise class], self.bindingPromise];
-            }
-            
-            if (self.parentPromise)
-            {
-                [mutableDescription appendFormat:@"\n%@", [self.parentPromise descriptionWithLocale:locale indent:level+1]];
+                [mutableDescription appendFormat:@"\n%@", [self.bindingPromise descriptionWithLocale:locale indent:level+1]];
             }
             break;
         }
@@ -140,139 +167,105 @@ NSString *const PZErrorDomain = @"com.zachradke.promiseZ.errorDomain";
     return [mutableDescription copy];
 }
 
-- (void)keepWithValue:(id)value
-{
-    [self _async:YES do:^(PZPromise *strongSelf) {
-        if (strongSelf.state != PZPromiseStatePending)
-        {
-            return;
-        }
-        
-        PZPromise *bindingPromise = strongSelf.bindingPromise;
-        if (bindingPromise)
-        {
-            if (bindingPromise.state != PZPromiseStateKept)
-            {
-                return;
-            }
-            else if ((bindingPromise.keptValue || value) && (!value || ![bindingPromise.keptValue isEqual:value]))
-            {
-                return;
-            }
-        }
-        
-        [strongSelf willChangeValueForKey:NSStringFromSelector(@selector(state))];
-        [strongSelf willChangeValueForKey:NSStringFromSelector(@selector(keptValue))];
-        
-        strongSelf->_state = PZPromiseStateKept;
-        strongSelf->_keptValue = value;
-        strongSelf->_parentPromise = nil;
-        strongSelf->_bindingPromise = nil;
-        
-        [strongSelf didChangeValueForKey:NSStringFromSelector(@selector(keptValue))];
-        [strongSelf didChangeValueForKey:NSStringFromSelector(@selector(state))];
-        
-        strongSelf.resolutionQueue.suspended = NO;
-    }];
-}
 
-- (void)breakWithReason:(NSError *)reason
-{
-    [self _async:YES do:^(PZPromise *strongSelf) {
-        if (strongSelf.state != PZPromiseStatePending)
-        {
-            return;
-        }
-        
-        PZPromise *bindingPromise = strongSelf.bindingPromise;
-        if (bindingPromise)
-        {
-            if (bindingPromise.state != PZPromiseStateBroken)
-            {
-                return;
-            }
-            else if ((bindingPromise.brokenReason || reason) && (!reason || ![bindingPromise.brokenReason isEqual:reason]))
-            {
-                return;
-            }
-        }
-        
-        [strongSelf willChangeValueForKey:NSStringFromSelector(@selector(state))];
-        [strongSelf willChangeValueForKey:NSStringFromSelector(@selector(brokenReason))];
-        
-        strongSelf->_state = PZPromiseStateBroken;
-        strongSelf->_brokenReason = reason;
-        strongSelf->_parentPromise = nil;
-        strongSelf->_bindingPromise = nil;
-        
-        [strongSelf didChangeValueForKey:NSStringFromSelector(@selector(brokenReason))];
-        [strongSelf didChangeValueForKey:NSStringFromSelector(@selector(state))];
-        
-        strongSelf.resolutionQueue.suspended = NO;
-    }];
-}
-
-#pragma mark - PZThenable
+#pragma mark PZThenable
 
 - (instancetype)thenOnKept:(PZOnKeptBlock)onKept onBroken:(PZOnBrokenBlock)onBroken
 {
-    __block PZPromise *returnPromise;
+    PZPromise *returnPromise;
     
-    [self _async:NO do:^(PZPromise *strongSelf) {
-        if (strongSelf.state == PZPromiseStateKept && !onKept)
-        {
-            returnPromise = [[[strongSelf class] alloc] initWithKeptValue:strongSelf.keptValue];
-            return;
-        }
-        else if (strongSelf.state == PZPromiseStateBroken && !onBroken)
-        {
-            returnPromise = [[[strongSelf class] alloc] initWithBrokenReason:strongSelf.brokenReason];
-            return;
-        }
-        
-        returnPromise = [[[strongSelf class] alloc] initWithParent:strongSelf];
+    OSSpinLockLock(&_spinLock);
+    
+    if (self.state == PZPromiseStateKept && !onKept)
+    {
+        returnPromise = [[[self class] alloc] initWithKeptValue:self.keptValue];
+    }
+    else if (self.state == PZPromiseStateBroken && !onBroken)
+    {
+        returnPromise = [[[self class] alloc] initWithBrokenReason:self.brokenReason];
+    }
+    else
+    {
+        returnPromise = [[[self class] alloc] initWithBindingPromise:self];
         
         _PZResolutionOperation *operation = [[_PZResolutionOperation alloc] initWithPromise:returnPromise onKept:onKept onBroken:onBroken];
-        [strongSelf.resolutionQueue addOperation:operation];
-    }];
+        [self.resolutionQueue addOperation:operation];
+    }
+    
+    OSSpinLockUnlock(&_spinLock);
     
     return returnPromise;
 }
 
 
-#pragma mark - Private
+#pragma mark Private
 
-- (void)_async:(BOOL)isAsync do:(void (^)(PZPromise *strongSelf))block
+- (BOOL)_transitionToState:(PZPromiseState)state valueOrReason:(id)valueOrReason isResolved:(BOOL)isResolved
 {
-    NSParameterAssert(block);
+    NSAssert(state != PZPromiseStatePending, @"Cannot transition promise (%@) to pending state.", self);
     
-    __weak typeof(self) weakSelf = self;
-    dispatch_block_t wrappedBlock = ^{
-        __strong typeof(weakSelf) strongSelf = weakSelf;
-        
-        if (strongSelf)
-        {
-            block(strongSelf);
-        }
-    };
+    OSSpinLockLock(&_spinLock);
     
-    if (isAsync)
+    // If a promise isn't pending it cannot be changed. Also, if a promise is being resolved (i.e. it was created via the -initWithBindingPromise: method) then it cannot be resolved manually unless isResolved is YES.
+    if (self.state != PZPromiseStatePending || (self.bindingPromise != nil && !isResolved))
     {
-        dispatch_async(self.isolationQueue, wrappedBlock);
+        OSSpinLockUnlock(&_spinLock);
+        return NO;
+    }
+    OSSpinLockUnlock(&_spinLock);
+    
+    NSString *changedValueKeyPath;
+    if (state == PZPromiseStateKept)
+    {
+        changedValueKeyPath = NSStringFromSelector(@selector(keptValue));
     }
     else
     {
-        dispatch_sync(self.isolationQueue, wrappedBlock);
+        changedValueKeyPath = NSStringFromSelector(@selector(brokenReason));
     }
+    
+    // The KVC notifications must be sent outside of our spin lock or else observers could accidentally cause a deadlock by invoking -thenOnKept:onBroken: or this method again.
+    [self willChangeValueForKey:NSStringFromSelector(@selector(state))];
+    [self willChangeValueForKey:changedValueKeyPath];
+    
+    OSSpinLockLock(&_spinLock);
+    
+    _state = state;
+    _bindingPromise = nil;
+    
+    if (state == PZPromiseStateKept)
+    {
+        _keptValue = valueOrReason;
+    }
+    else
+    {
+        _brokenReason = valueOrReason;
+    }
+    
+    OSSpinLockUnlock(&_spinLock);
+    
+    [self didChangeValueForKey:changedValueKeyPath];
+    [self didChangeValueForKey:NSStringFromSelector(@selector(state))];
+    
+    // We resume our resolution queue which will allow the _PZResolutionOperations to commence. This must be done asynchronously to ensure that resolution happens in at least the next runloop
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.resolutionQueue.suspended = NO;
+    });
+    
+    return YES;
 }
 
 @end
 
 
+#pragma mark - _PZResolutionOperation
+
 @implementation _PZResolutionOperation
 
 - (instancetype)initWithPromise:(PZPromise *)promise onKept:(PZOnKeptBlock)onKept onBroken:(PZOnBrokenBlock)onBroken
 {
+    NSParameterAssert(promise);
+    
     if (!(self = [super init]))
     {
         return nil;
@@ -291,42 +284,70 @@ NSString *const PZErrorDomain = @"com.zachradke.promiseZ.errorDomain";
     PZPromise *promise = self.promise;
     if (self.isCancelled || !promise)
     {
+        // We nil out the blocks so any potential retain cycles are broken.
+        _onKept = nil;
+        _onBroken = nil;
         return;
     }
     
-    PZPromise *parentPromise = promise.parentPromise;
-    PZPromiseState parentState = parentPromise.state;
+    PZPromise *bindingPromise = promise.bindingPromise;
+    PZPromiseState bindingPromiseState = bindingPromise.state;
     
-    if (parentState == PZPromiseStatePending)
+    if (bindingPromiseState == PZPromiseStatePending)
     {
-        NSError *error = [NSError errorWithDomain:PZErrorDomain code:PZInternalError userInfo:@{NSLocalizedDescriptionKey: @"The promise started executing its enqueued callback handlers before being kept or broken."}];
+        NSDictionary *userInfo = @{NSLocalizedDescriptionKey: @"Internal promise inconsistency error.",
+                                   NSLocalizedFailureReasonErrorKey: [NSString stringWithFormat:@"The promise (<%@:%p>) started resolving before being kept or broken.", [promise class], promise]};
+        NSError *error = [NSError errorWithDomain:PZErrorDomain code:PZInternalError userInfo:userInfo];
         
-        [promise breakWithReason:error];
-        [parentPromise breakWithReason:error];
+        // As per the spec, if a promise attempts to resolve before it can, it breaks both the returned promise and the binding promise.
+        [promise _transitionToState:PZPromiseStateBroken valueOrReason:error isResolved:YES];
+        [bindingPromise _transitionToState:PZPromiseStateBroken valueOrReason:error isResolved:YES];
+        
+        _onKept = nil;
+        _onBroken = nil;
     }
-    else if ((parentState == PZPromiseStateKept && self.onKept) || (parentState == PZPromiseStateBroken && self.onBroken))
+    else if ((bindingPromiseState == PZPromiseStateKept && self.onKept) || (bindingPromiseState == PZPromiseStateBroken && self.onBroken))
     {
         @try
         {
-            id blockResult = (parentState == PZPromiseStateKept) ? self.onKept(parentPromise.keptValue) : self.onBroken(parentPromise.brokenReason);
+            id blockResult;
+            if (bindingPromiseState == PZPromiseStateKept)
+            {
+                blockResult = self.onKept(bindingPromise.keptValue);
+            }
+            else
+            {
+                blockResult = self.onBroken(bindingPromise.brokenReason);
+            }
+            
+            // Once we've executed the blocks, we no longer need them
+            _onKept = nil;
+            _onBroken = nil;
+            
             [self _resolvePromiseWithBlockResult:blockResult];
         }
         @catch (NSException *exception)
         {
-            NSError *error = [NSError errorWithDomain:PZErrorDomain code:PZExceptionError userInfo:@{NSLocalizedDescriptionKey: exception.reason}];
-            [promise breakWithReason:error];
+            NSDictionary *userInfo = @{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Unexepected exception raised while resolving promise (<%@:%p>).", [promise class], promise],
+                                       NSLocalizedFailureReasonErrorKey: exception.reason ?: exception.description};
+            NSError *error = [NSError errorWithDomain:PZErrorDomain code:PZExceptionError userInfo:userInfo];
+            [promise _transitionToState:PZPromiseStateBroken valueOrReason:error isResolved:YES];
         }
     }
     else
     {
-        if (parentState == PZPromiseStateKept)
+        // If there was no on-kept or on-broken block associated with the promise resolution, we simply have the promise adopt the state of the binding promise.
+        if (bindingPromiseState == PZPromiseStateKept)
         {
-            [promise keepWithValue:parentPromise.keptValue];
+            [promise _transitionToState:PZPromiseStateKept valueOrReason:bindingPromise.keptValue isResolved:YES];
         }
         else
         {
-            [promise breakWithReason:parentPromise.brokenReason];
+            [promise _transitionToState:PZPromiseStateBroken valueOrReason:bindingPromise.brokenReason isResolved:YES];
         }
+        
+        _onKept = nil;
+        _onBroken = nil;
     }
 }
 
@@ -340,22 +361,21 @@ NSString *const PZErrorDomain = @"com.zachradke.promiseZ.errorDomain";
     
     if (self.resolutionCount > PZMaximumResolutionRecursionDepth)
     {
-        NSError *error = [NSError errorWithDomain:PZErrorDomain code:PZRecursionError userInfo:@{NSLocalizedDescriptionKey: @"The promise's resolution has exceeded the maximum allowed recursion depth"}];
-        [promise breakWithReason:error];
+        NSDictionary *userInfo = @{NSLocalizedDescriptionKey: @"Infinite promise resolution recursion error.",
+                                   NSLocalizedFailureReasonErrorKey: [NSString stringWithFormat:@"Resolving the promise (<%@:%p>) has exceeded the maximum allowed recursion depth.", [promise class], promise]};
+        NSError *error = [NSError errorWithDomain:PZErrorDomain code:PZRecursionError userInfo:userInfo];
+        [promise _transitionToState:PZPromiseStateBroken valueOrReason:error isResolved:YES];
     }
     else if (blockResult == promise)
     {
-        NSError *error = [NSError errorWithDomain:PZErrorDomain code:PZRecursionError userInfo:@{NSLocalizedDescriptionKey: @"The promise cannot be resolved with itself"}];
-        [promise breakWithReason:error];
+        NSDictionary *userInfo = @{NSLocalizedDescriptionKey: @"Infinite promise resolution recursion error.",
+                                   NSLocalizedFailureReasonErrorKey: [NSString stringWithFormat:@"The promise (<%@:%p>) cannot be resolved with itself.", [promise class], promise]};
+        NSError *error = [NSError errorWithDomain:PZErrorDomain code:PZRecursionError userInfo:userInfo];
+        [promise _transitionToState:PZPromiseStateBroken valueOrReason:error isResolved:YES];
     }
     else if ([blockResult conformsToProtocol:@protocol(PZThenable)])
     {
-        if ([blockResult isKindOfClass:[PZPromise class]])
-        {
-            // This prevents the promise from being resolved before the blockResult is.
-            promise.bindingPromise = blockResult;
-        }
-        
+        // We only allow a single execution of our on-kept or on-broken blocks.
         __block BOOL handlerExecuted = NO;
         
         // We keep this operation around until the promise has finally resolved
@@ -380,7 +400,7 @@ NSString *const PZErrorDomain = @"com.zachradke.promiseZ.errorDomain";
             
             if (!handlerExecuted)
             {
-                [promise breakWithReason:error];
+                [promise _transitionToState:PZPromiseStateBroken valueOrReason:error isResolved:YES];
                 handlerExecuted = YES;
             }
             
@@ -390,7 +410,8 @@ NSString *const PZErrorDomain = @"com.zachradke.promiseZ.errorDomain";
     }
     else
     {
-        [promise keepWithValue:blockResult];
+        // If the value is not a PZThenable or invalid it is used to keep the promise.
+        [promise _transitionToState:PZPromiseStateKept valueOrReason:blockResult isResolved:YES];
     }
 }
 
